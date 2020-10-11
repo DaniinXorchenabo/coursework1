@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include <graphics.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -14,7 +14,8 @@ using namespace std;
 int main(){
     //---------- Инициализация графики ----------//
     int gdriver = DETECT, gmode, errorcode;
-    initgraph(&gdriver,&gmode,"");
+    char ggg = 'i';
+    initgraph(&gdriver, &gmode, &ggg);
     //---------- Конец инициализации -----------//
 
     setfillstyle(SOLID_FILL,GREEN);
