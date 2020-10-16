@@ -18,6 +18,3 @@ int main()
     std::cout << point1.get_x() << " " << point1.get_y()<< std::endl;
     return 0;
 }
-
-#include "point.cpp"
-#include "figure.cpp"
