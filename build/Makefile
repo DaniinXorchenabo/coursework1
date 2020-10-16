@@ -24,6 +24,8 @@ point.o:
 
 clean:
 	rm -rf $(build_materials)*.o main
+
+	
 # D:\ystanovki\gcc\library\graphics\lib\libgdi32.a D:\ystanovki\gcc\library\graphics\lib\libcomdlg32.a D:\ystanovki\gcc\library\graphics\lib\libuuid.a  D:\ystanovki\gcc\library\graphics\lib\liboleaut32.a  D:\ystanovki\gcc\library\graphics\lib\libole32 .a
 # D:\ystanovki\gcc\library\graphics\lib\libgdi32.a
 # D:\ystanovki\gcc\library\graphics\lib\libcomdlg32.a
