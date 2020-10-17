@@ -1,8 +1,10 @@
 CC=g++
-build_materials = ./build/materials/
-start_path = -c -Wall
+build_materials = .\build\materials\\
+# start_path = -c -Wall
 app_dir = ./app/
 done_dir = ./done/
+del_file = $(wildcard $(build_materials)*.o)
+#vpath %.o $(wildcard build_materials)
 
 all: main
 
@@ -23,9 +25,9 @@ point.o:
 	$(CC) -c $(app_dir)point.cpp -o $(build_materials)point.o
 
 clean:
-	rm -rf $(build_materials)*.o main
+	DEL $(build_materials)*.o
 
-	
+
 # D:\ystanovki\gcc\library\graphics\lib\libgdi32.a D:\ystanovki\gcc\library\graphics\lib\libcomdlg32.a D:\ystanovki\gcc\library\graphics\lib\libuuid.a  D:\ystanovki\gcc\library\graphics\lib\liboleaut32.a  D:\ystanovki\gcc\library\graphics\lib\libole32 .a
 # D:\ystanovki\gcc\library\graphics\lib\libgdi32.a
 # D:\ystanovki\gcc\library\graphics\lib\libcomdlg32.a
