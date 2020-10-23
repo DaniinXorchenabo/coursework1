@@ -8,21 +8,21 @@ del_file = $(wildcard $(build_materials)*.o)
 
 all: main
 
-main: main.o figure.o point.o
-	
-	$(CC) -o $(done_dir)main.exe $(build_materials)main.o $(build_materials)figure.o $(build_materials)point.o
-	$(done_dir)main.exe
+main: main.o figure.o point.o console_worker.o
+	$(CC) -o $(done_dir)main.exe $(build_materials)main.o $(build_materials)figure.o $(build_materials)console_worker.o $(build_materials)point.o -lgdi32
+	$(done_dir)main.exe 
 
 main.o:
 	$(CC) -c $(app_dir)main.cpp -o $(build_materials)main.o
 
 figure.o:
-
 	$(CC) -c $(app_dir)figure.cpp -o $(build_materials)figure.o
 
 point.o:
-
 	$(CC) -c $(app_dir)point.cpp -o $(build_materials)point.o
+
+console_worker.o:
+	$(CC) -c $(app_dir)console_worker.cpp -o $(build_materials)console_worker.o
 
 clean:
 	DEL $(build_materials)*.o

@@ -45,7 +45,7 @@
 
 
 
-#include <graphics.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -55,6 +55,7 @@
 #include <string.h>
 #include <iostream>
 #include <ctime>
+#include <graphics.h>
 
 using namespace std;
 
