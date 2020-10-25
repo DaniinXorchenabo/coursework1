@@ -92,7 +92,7 @@ class CWnd
       LPCSTR text11 = "window title";
       _hwnd=CreateWindowEx(exstyle, fff1, text11,
                           style|WS_CLIPCHILDREN,  //Стиль WS_CLIPCHILDREN нужен для того, чтобы дочерние контролы не мигали при перерисовке
-                          x,y,w,h,parent,HMENU(id),
+                          x,y,w,h,parent, HMENU(),
                           GetModuleHandle(0),
                           this  //Передаем в оконную функцию указатель на класс нашего окна
       );
@@ -114,11 +114,14 @@ class CWnd
         //Получаем указатель на экземпляр нашего окна, который мы передали в функцию CreateWindowEx
         wnd=(CWnd*)LPCREATESTRUCT(lparam)->lpCreateParams;
         //И сохраняем в поле GWL_USERDATA
-        SetWindowLong(hwnd, GWL_USERDATA, (LONG)(LPCREATESTRUCT(lparam)->lpCreateParams) );
+        auto s1 = *reinterpret_cast<LONG *>(LPCREATESTRUCT(lparam)->lpCreateParams);
+        SetWindowLong(hwnd, GWL_USERDATA, s1); //reinterpret_cast<LONG> dynamic_cast<LONG>
         wnd->_hwnd=hwnd;      
       }
       //Теперь получаем указатель на наш экземлпяр окна, но уже из поля GWL_USERDATA
-      wnd=(CWnd*)GetWindowLong(hwnd,GWL_USERDATA);
+      wnd=(CWnd*)GetWindowLong(
+        hwnd, 
+        (int16_t)GWL_USERDATA);
       if(wnd)
       {
         //Ищем сообщение в карте
