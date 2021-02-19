@@ -536,7 +536,7 @@ static void (*_cffi_call_python_org)(struct _cffi_externpy_s *, char *);
 }
 #endif
 
-#define _CFFI_MODULE_NAME  "my_library"
+#define _CFFI_MODULE_NAME  "python_graphics"
 static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 // # NB. this is not a string because of a size limit in MSVC
 // from my_library import ffi, lib
@@ -776,11 +776,11 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 32,32,32,32,114,101,116,117,114,110,32,55,10,
 0 };
 #ifdef PYPY_VERSION
-# define _CFFI_PYTHON_STARTUP_FUNC  _cffi_pypyinit_my_library
+# define _CFFI_PYTHON_STARTUP_FUNC  _cffi_pypyinit_python_graphics
 #elif PY_MAJOR_VERSION >= 3
-# define _CFFI_PYTHON_STARTUP_FUNC  PyInit_my_library
+# define _CFFI_PYTHON_STARTUP_FUNC  PyInit_python_graphics
 #else
-# define _CFFI_PYTHON_STARTUP_FUNC  initmy_library
+# define _CFFI_PYTHON_STARTUP_FUNC  initpython_graphics
 #endif
 
 /***** Support code for embedding *****/
@@ -1471,7 +1471,7 @@ static void *_cffi_types[] = {
 };
 
 static struct _cffi_externpy_s _cffi_externpy__compute =
-  { "my_library.compute", (int)sizeof(float), 0, 0 };
+  { "python_graphics.compute", (int)sizeof(float), 0, 0 };
 
 CFFI_DLLEXPORT float compute(float a0, float a1)
 {
@@ -1484,7 +1484,7 @@ CFFI_DLLEXPORT float compute(float a0, float a1)
 }
 
 static struct _cffi_externpy_s _cffi_externpy__create_obj =
-  { "my_library.create_obj", (int)sizeof(int), 0, 0 };
+  { "python_graphics.create_obj", (int)sizeof(int), 0, 0 };
 
 CFFI_DLLEXPORT int create_obj(int a0)
 {
@@ -1496,7 +1496,7 @@ CFFI_DLLEXPORT int create_obj(int a0)
 }
 
 static struct _cffi_externpy_s _cffi_externpy__my_python_print =
-  { "my_library.my_python_print", (int)sizeof(int), 0, 0 };
+  { "python_graphics.my_python_print", (int)sizeof(int), 0, 0 };
 
 CFFI_DLLEXPORT int my_python_print(void)
 {
@@ -1507,7 +1507,7 @@ CFFI_DLLEXPORT int my_python_print(void)
 }
 
 static struct _cffi_externpy_s _cffi_externpy__print_class =
-  { "my_library.print_class", (int)sizeof(int), 0, 0 };
+  { "python_graphics.print_class", (int)sizeof(int), 0, 0 };
 
 CFFI_DLLEXPORT int print_class(int a0)
 {
@@ -1547,7 +1547,7 @@ static const struct _cffi_type_context_s _cffi_type_context = {
 
 #ifdef PYPY_VERSION
 PyMODINIT_FUNC
-_cffi_pypyinit_my_library(const void *p[])
+_cffi_pypyinit_python_graphics(const void *p[])
 {
     if (((intptr_t)p[0]) >= 0x0A03) {
         _cffi_call_python_org = (void(*)(struct _cffi_externpy_s *, char *))p[1];
@@ -1561,22 +1561,22 @@ _cffi_pypyinit_my_library(const void *p[])
 #  ifdef _MSC_VER
      PyMODINIT_FUNC
 #  if PY_MAJOR_VERSION >= 3
-     PyInit_my_library(void) { return NULL; }
+     PyInit_python_graphics(void) { return NULL; }
 #  else
-     initmy_library(void) { }
+     initpython_graphics(void) { }
 #  endif
 #  endif
 #elif PY_MAJOR_VERSION >= 3
 PyMODINIT_FUNC
-PyInit_my_library(void)
+PyInit_python_graphics(void)
 {
-  return _cffi_init("my_library", 0x2701, &_cffi_type_context);
+  return _cffi_init("python_graphics", 0x2701, &_cffi_type_context);
 }
 #else
 PyMODINIT_FUNC
-initmy_library(void)
+initpython_graphics(void)
 {
-  _cffi_init("my_library", 0x2701, &_cffi_type_context);
+  _cffi_init("python_graphics", 0x2701, &_cffi_type_context);
 }
 #endif
 
