@@ -1,10 +1,12 @@
-
+""""Этот """
 
 
 from my_library import ffi, lib
 
 import sys
 import os
+
+
 sys.path.insert(0, r"C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38\lib\site-packages")
 # sys.path = [i for i in sys.path if 'anaconda' not in i]
 
