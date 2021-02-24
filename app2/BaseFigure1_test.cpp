@@ -1,5 +1,6 @@
-#include <>
 #include <list>
+#include "python_graphics.h"
+using std::list;
 
 class Point{
 
@@ -8,25 +9,11 @@ class Point{
         int canvas;
 
     public:
-        Point(){
-            x = 0;
-            y = 0;
-            canvas = NULL;
-        }
 
-        Point(int my_canvas int s_x, int s_y){
-            canvas = my_canvas;
-            x = s_x;
-            y = s_y;
+        int get_canvas(){
+            return canvas;
         }
-
-        Point(Point copy){
-            canvas = copy.get_canvas();
-            x = copy.get_raw_x();
-            y = copy.get_raw_y();
-        }
-
-        float get_raw_x(){
+                float get_raw_x(){
             return x;
         }
 
@@ -40,33 +27,43 @@ class Point{
         int get_y(){
             return (int)y;
         }
+
+        Point(){
+            x = 0;
+            y = 0;
+        }
+
+        Point(int my_canvas, int s_x, int s_y){
+            canvas = my_canvas;
+            x = s_x;
+            y = s_y;
+        }
+
+        Point (const Point& copy){
+            canvas = copy->get_canvas();
+            x = copy->get_raw_x();
+            y = copy->get_raw_y();
+        }
         void draw(){
             draw_point(canvas, x, y);
         }
-        void draw_line(Point){
-            draw_line(canvas, x, y, Point.get_x(), Point.get_y());
+        void draw_line(Point& point){
+            draw_line(canvas, x, y, point->get_x(), point->get_y());
         }
 
-        int get_canvas(){
-            return canvas;
-        }
-
-}
+};
 
 class BaseFigure{
 
     private:
         int canvas;
 
-
     public:
-        list complex_figure = NULL
-        list<Point&> points_with_line = list<Point*>() // точки, соеденнные линией
-        list<Point*> points_no_line = list<Point*>()  // точки, не соеденённые линией
+        list<BaseFigure> complex_figure = list<BaseFigure*>();
+        list<Point&> points_with_line = list<Point*>(); // точки, соеденнные линией
+        list<Point&> points_no_line = list<Point*>();  // точки, не соеденённые линией
 
-        BaseFigure(){
-            canvas = NULL
-        }
+        BaseFigure(){}
 
         BaseFigure(int my_canvas, Point points, ...){
             canvas = my_canvas;
@@ -145,3 +142,8 @@ class BaseFigure{
 
 };
 
+
+//int main(){
+//    BF({Point(1,2), Point(1,2), Point(1,2), Point(1,2)})
+//    return 0;
+//}
