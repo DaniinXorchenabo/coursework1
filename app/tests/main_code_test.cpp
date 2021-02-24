@@ -8,6 +8,8 @@ using namespace std;
 // определение типа для указателя на функцию, которая возвращает void
 typedef void (*VoidReturnFunc)();
 typedef int (*intReturnFunc)(int);
+//using (*VoidReturnFunc)() = void;
+//using (*intReturnFunc)(int) = int;
 //typedef void (*VoidReturnFunc)();
 
 int main()
