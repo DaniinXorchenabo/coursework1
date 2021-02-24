@@ -1,0 +1,12 @@
+/**/.vscode/**/*
+/**/.git/*
+*.a
+/done/**/*
+/**/.vs/*
+/build/materials/**/*
+/**/.idea
+/**/cffi/**/*
+/**/cffi-1.14.0.dist-info/**/*
+/**/Release/**/*
+*.pyd
+/**/create_dll_lib/**/*.dll
