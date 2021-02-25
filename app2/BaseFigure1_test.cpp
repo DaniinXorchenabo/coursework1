@@ -59,13 +59,28 @@ class BaseFigure{
         int canvas;
 
     public:
-        list<BaseFigure> complex_figure = list<BaseFigure*>();
-        list<Point&> points_with_line = list<Point*>(); // точки, соеденнные линией
-        list<Point&> points_no_line = list<Point*>();  // точки, не соеденённые линией
+        list<BaseFigure&> complex_figure = list<BaseFigure*>();
+        list<Point> points_with_line = list<Point>(); // точки, соеденнные линией
+        list<Point> points_no_line = list<Point>();  // точки, не соеденённые линией
 
         BaseFigure(){}
 
-        BaseFigure(int my_canvas, Point points, ...){
+//class BaseFigure{
+//list<Point&> points_with_line
+//        BaseFigure(const initializer_list<Point> &slst)
+//        {
+//            list<Point> lst(slst);
+//            points_with_line = lst
+//        }
+//}
+
+        BaseFigure(const initializer_list<Point> &points)
+        {
+            points_with_line(points){};
+        }
+
+        BaseFigure(int my_canvas, const initializer_list<Point> &points){
+            // BaseFigure(my_canvas, { p1, p2, p3 })
             canvas = my_canvas;
             //Point* p = &points;
             for (auto p = &points; *p; p++){
