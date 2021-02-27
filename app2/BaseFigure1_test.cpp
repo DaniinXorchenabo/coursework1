@@ -63,16 +63,15 @@ class BaseFigure{
         list<Point> points_with_line = list<Point>(); // точки, соеденнные линией
         list<Point> points_no_line = list<Point>();  // точки, не соеденённые линией
 
+        bool is_complex_figure(){
+            return complex_figure != NULL;
+        }
+        int get_canvas(){
+            return canvas;
+        }
+
         BaseFigure(){}
 
-//class BaseFigure{
-//list<Point&> points_with_line
-//        BaseFigure(const initializer_list<Point> &slst)
-//        {
-//            list<Point> lst(slst);
-//            points_with_line = lst
-//        }
-//}
 
         BaseFigure(const initializer_list<Point> &points)
         {
@@ -80,41 +79,25 @@ class BaseFigure{
         }
 
         BaseFigure(int my_canvas, const initializer_list<Point> &points){
-            // BaseFigure(my_canvas, { p1, p2, p3 })
-            canvas = my_canvas;
-            //Point* p = &points;
-            for (auto p = &points; *p; p++){
-                points_with_line.add(*p);
-            }
-//            while (*p){
-//                points_with_line.add(*p);
-//                p++;
-//            }
-//            points_with_line = (list<Point>)points; // Так можно?
+            /* Вызов BaseFigure(my_canvas, { p1, p2, p3 }) */
 
-            // а как это сделать?
-            ///Нет points другого типа данных, попробуй dinamic_cast может поможет
-//            points_with_line = points;
-        }
-        BaseFigure(int my_canvas, list[int[2]] coordinates){
             canvas = my_canvas;
-            points_with_line = []
-            for (auto data: coordinates){
-                points_with_line.add(Point(data[0], data[1]));
+            points_with_line(points){};
+//            for (auto p = &points; *p; p++){ points_with_line.add(*p); }
+        }
+
+        BaseFigure(int my_canvas, int coordinates, ...){
+            canvas = my_canvas;
+            for (auto coordinate = &coordinates; *coordinate; coordinate++){
+                points_with_line.add(canvas, Point(coordinate, ++coordinate));
             }
         }
+
         BaseFigure(BaseFigure figure_material){
             canvas = figure_material.get_canvas();
             points_no_line = figure_material.points_no_line;
             points_with_line = figure_material.points_with_line;
             complex_figure = figure_material.complex_figure;
-        }
-
-        bool is_complex_figure(){
-            return complex_figure != NULL;
-        }
-        int get_canvas(){
-            return canvas;
         }
 
         void draw(){
@@ -137,20 +120,28 @@ class BaseFigure{
             }
         }
 
-        const BaseFigure operator+(const BaseFigure& other_figure) const {
+        const BaseFigure operator+=(const BaseFigure& other_figure) const {
             if ((len(complex_figure) == 0) && (len(other_figure.complex_figure) == 0)){
-                complex_figure.add(BaseFigure(this))
-                complex_figure.add(other_figure)
+                complex_figure.add(BaseFigure(this));
+                complex_figure.add(other_figure);
+                points_with_line = list<Point>();
+                points_no_line = list<Point>();
+
             }
             else if ((len(complex_figure) != 0) && (len(other_figure.complex_figure) == 0)){
-                complex_figure.add(BaseFigure(other_figure))
+                complex_figure.add(BaseFigure(other_figure));
+                other_figure.points_with_line = list<Point>();
+                other_figure.points_no_line = list<Point>();
             }
             else if ((len(complex_figure) == 0) && (len(other_figure.complex_figure) != 0)){
-                complex_figure = other_figure.complex_figure
-                complex_figure.insert(0, BaseFigure(this))
+                complex_figure = other_figure.complex_figure;
+                complex_figure.insert(0, BaseFigure(this));
+                points_with_line = list<Point>();
+                points_no_line = list<Point>();
+
             }
             else if ((len(complex_figure) != 0) && (len(other_figure.complex_figure) != 0)){
-                complex_figure.exists(other_figure.complex_figure)
+                complex_figure.exists(other_figure.complex_figure);
             }
             return this
         }
