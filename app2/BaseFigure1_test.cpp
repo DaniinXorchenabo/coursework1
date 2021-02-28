@@ -78,27 +78,21 @@ class BaseFigure{
 
         BaseFigure(){}
 
-
-//        BaseFigure(int my_canvas, const initializer_list<Point> &points)
-//        {
-//            /* Вызов BaseFigure(my_canvas, { p1, p2, p3 }) */
-//            canvas = my_canvas;
-//            points_with_line(points){};
-//        }
+        BaseFigure(int my_canvas){ canvas = my_canvas; }
 
         BaseFigure(int my_canvas, Point points, ...){
-            /* Вызов BaseFigure(my_canvas, { p1, p2, p3 }) */
+            /* Вызов BaseFigure(my_canvas, p1, p2, p3}) */
 
             canvas = my_canvas;
             for (Point* p = &points; p; p++){
-                points_with_line.push_back(make_unique<Point>(*p));
+                points_with_line.push_back(make_shared<Point>(*p));
             }
         }
 
         BaseFigure(int my_canvas, int coordinates, ...){
             canvas = my_canvas;
             for (auto coordinate = &coordinates; *coordinate; coordinate++){
-                points_with_line.push_back(make_unique<Point>(canvas, *coordinate, *(++coordinate)));
+                points_with_line.push_back(make_shared<Point>(canvas, *coordinate, *(++coordinate)));
             }
         }
 
@@ -127,31 +121,57 @@ class BaseFigure{
             }
         }
 
-//        const BaseFigure operator+=(const BaseFigure& other_figure) const {
-//            if ((len(complex_figure) == 0) && (len(other_figure.complex_figure) == 0)){
-//                complex_figure.add(BaseFigure(this));
-//                complex_figure.add(other_figure);
-//                points_with_line = list<Point>();
-//                points_no_line = list<Point>();
-//
-//            }
-//            else if ((len(complex_figure) != 0) && (len(other_figure.complex_figure) == 0)){
-//                complex_figure.add(BaseFigure(other_figure));
-//                other_figure.points_with_line = list<Point>();
-//                other_figure.points_no_line = list<Point>();
-//            }
-//            else if ((len(complex_figure) == 0) && (len(other_figure.complex_figure) != 0)){
-//                complex_figure = other_figure.complex_figure;
-//                complex_figure.insert(0, BaseFigure(this));
-//                points_with_line = list<Point>();
-//                points_no_line = list<Point>();
-//
-//            }
-//            else if ((len(complex_figure) != 0) && (len(other_figure.complex_figure) != 0)){
+        const BaseFigure& operator+=(const BaseFigure& other_figure) {
+            if (complex_figure.empty() && other_figure.complex_figure.empty()){
+                complex_figure.push_back(make_shared<BaseFigure>(*this));
+                complex_figure.push_back(make_shared<BaseFigure>(other_figure));
+                points_with_line = {};
+                points_no_line = {};
+
+            }
+            else if (!complex_figure.empty() && other_figure.complex_figure.empty()){
+                complex_figure.push_back(make_shared<BaseFigure>(other_figure));
+            }
+            else if (complex_figure.empty() && !other_figure.complex_figure.empty()){
+                complex_figure = other_figure.complex_figure;
+                complex_figure.push_front(make_shared<BaseFigure>(*this));
+                points_with_line = {};
+                points_no_line = {};
+
+            }
+            else if (!complex_figure.empty() && !other_figure.complex_figure.empty()){
+//                complex_figure += other_figure.complex_figure;
 //                complex_figure.merge(other_figure.complex_figure);
-//            }
-//            return this
-//        }
+            }
+
+            return *this;
+        }
+
+        const BaseFigure operator+(const BaseFigure& right) {
+
+            BaseFigure new_figure(get_canvas());
+
+            if (complex_figure.empty() && right.complex_figure.empty()){
+                new_figure.complex_figure.push_back(make_shared<BaseFigure>(*this));
+                new_figure.complex_figure.push_back(make_shared<BaseFigure>(right));
+            }
+            else if (!complex_figure.empty() && right.complex_figure.empty()){
+                new_figure.complex_figure = complex_figure;
+                new_figure.complex_figure.push_back(make_shared<BaseFigure>(right));
+            }
+            else if (complex_figure.empty() && !right.complex_figure.empty()){
+                new_figure.complex_figure = right.complex_figure;
+                new_figure.complex_figure.push_front(make_shared<BaseFigure>(*this));
+            }
+            else if (!complex_figure.empty() && !right.complex_figure.empty()){
+                new_figure.complex_figure = complex_figure;
+//                new_figure.complex_figure.merge(right.complex_figure);
+//                complex_figure += right.complex_figure;
+//                complex_figure.merge(right.complex_figure);
+            }
+
+            return new_figure;
+        }
 
 };
 
