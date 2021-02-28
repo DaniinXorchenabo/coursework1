@@ -109,25 +109,23 @@ class BaseFigure{
             complex_figure = figure_material.complex_figure;
         }
 
-//        void draw(){
-//            if (len(complex_figure) > 1){
-//                for (auto figure: complex_figure){
-//                    figure.draw()
-//                }
-//            }
-//            else {
-//                Point start_point = NULL;
-//                for (auto point: points_with_line){
-//                    if (start_point != NULL){
-//                        point.draw_line(start_point);
-//                    }
-//                    start_point = Point
-//                }
-//                for (auto point: points_no_line){
-//                    point.draw();
-//                }
-//            }
-//        }
+        void draw(){
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    figure->draw();
+                }
+            }
+            else {
+                auto first_point = points_with_line.back();
+                for (auto second_point: points_with_line){
+                    second_point->draw_line(*first_point);
+                    first_point = second_point;
+                }
+                for (auto point: points_no_line){
+                    point->draw();
+                }
+            }
+        }
 
 //        const BaseFigure operator+=(const BaseFigure& other_figure) const {
 //            if ((len(complex_figure) == 0) && (len(other_figure.complex_figure) == 0)){
