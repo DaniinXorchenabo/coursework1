@@ -45,10 +45,10 @@ class Point{
             y = copy.get_raw_y();
         }
         void draw(){
-            draw_point(canvas, x, y);
+            draw_point_python(canvas, x, y);
         }
         void draw_line(Point& point){
-            draw_line(canvas, x, y, point->get_x(), point->get_y());
+            draw_line_python(canvas, get_x(), get_y(), point.get_x(), point.get_y());
         }
 
 };
