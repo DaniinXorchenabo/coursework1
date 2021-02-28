@@ -64,15 +64,15 @@ class BaseFigure{
         int canvas;
 
     public:
-        list<unique_ptr<BaseFigure>> complex_figure = {};
-        list<unique_ptr<Point>> points_with_line = {}; // точки, соеденнные линией
-        list<unique_ptr<Point>> points_no_line = {};  // точки, не соеденённые линией
+        list<shared_ptr<BaseFigure>> complex_figure = {};
+        list<shared_ptr<Point>> points_with_line = {}; // точки, соеденнные линией
+        list<shared_ptr<Point>> points_no_line = {};  // точки, не соеденённые линией
 
         bool is_complex_figure(){
             return complex_figure.empty() ;
         }
 
-        int get_canvas(){
+        int get_canvas() const {
             return canvas;
         }
 
@@ -102,12 +102,12 @@ class BaseFigure{
             }
         }
 
-//        BaseFigure(BaseFigure figure_material){
-//            canvas = figure_material.get_canvas();
-//            points_no_line = figure_material.points_no_line;
-//            points_with_line = figure_material.points_with_line;
-//            complex_figure = figure_material.complex_figure;
-//        }
+        BaseFigure (const BaseFigure& figure_material){
+            canvas = figure_material.get_canvas();
+            points_no_line = figure_material.points_no_line;
+            points_with_line = figure_material.points_with_line;
+            complex_figure = figure_material.complex_figure;
+        }
 
 //        void draw(){
 //            if (len(complex_figure) > 1){
