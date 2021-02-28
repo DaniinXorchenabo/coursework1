@@ -69,7 +69,7 @@ class BaseFigure{
         list<unique_ptr<Point>> points_no_line = {};  // точки, не соеденённые линией
 
         bool is_complex_figure(){
-            return false;
+            return complex_figure.empty() ;
         }
 
         int get_canvas(){
@@ -91,17 +91,16 @@ class BaseFigure{
 
             canvas = my_canvas;
             for (Point* p = &points; p; p++){
-
                 points_with_line.push_back(make_unique<Point>(*p));
             }
         }
 
-//        BaseFigure(int my_canvas, int coordinates, ...){
-//            canvas = my_canvas;
-//            for (auto coordinate = &coordinates; *coordinate; coordinate++){
-//                points_with_line.add(canvas, Point(coordinate, ++coordinate));
-//            }
-//        }
+        BaseFigure(int my_canvas, int coordinates, ...){
+            canvas = my_canvas;
+            for (auto coordinate = &coordinates; *coordinate; coordinate++){
+                points_with_line.push_back(make_unique<Point>(canvas, *coordinate, *(++coordinate)));
+            }
+        }
 
 //        BaseFigure(BaseFigure figure_material){
 //            canvas = figure_material.get_canvas();
