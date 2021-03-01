@@ -121,7 +121,7 @@ class BaseFigure{
             }
         }
 
-        const BaseFigure& operator+=(const BaseFigure& other_figure) {
+        BaseFigure& operator+=(const BaseFigure& other_figure) {
             if (complex_figure.empty() && other_figure.complex_figure.empty()){
                 complex_figure.push_back(make_shared<BaseFigure>(*this));
                 complex_figure.push_back(make_shared<BaseFigure>(other_figure));
@@ -142,6 +142,8 @@ class BaseFigure{
             else if (!complex_figure.empty() && !other_figure.complex_figure.empty()){
 //                complex_figure += other_figure.complex_figure;
 //                complex_figure.merge(other_figure.complex_figure);
+                auto a = other_figure.complex_figure;
+                complex_figure.merge(a);
             }
 
             return *this;
@@ -165,6 +167,8 @@ class BaseFigure{
             }
             else if (!complex_figure.empty() && !right.complex_figure.empty()){
                 new_figure.complex_figure = complex_figure;
+                auto a = right.complex_figure;
+                complex_figure.merge(a);
 //                new_figure.complex_figure.merge(right.complex_figure);
 //                complex_figure += right.complex_figure;
 //                complex_figure.merge(right.complex_figure);
