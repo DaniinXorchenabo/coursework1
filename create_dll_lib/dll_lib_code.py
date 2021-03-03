@@ -1,7 +1,7 @@
 """"Этот """
 
 
-from my_library import ffi, lib
+from python_graphics import ffi, lib
 
 import sys
 import os

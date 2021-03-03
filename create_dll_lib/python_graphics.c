@@ -539,15 +539,25 @@ static void (*_cffi_call_python_org)(struct _cffi_externpy_s *, char *);
 #define _CFFI_MODULE_NAME  "python_graphics"
 static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 // # NB. this is not a string because of a size limit in MSVC
-// from my_library import ffi, lib
-102,114,111,109,32,109,121,95,108,105,98,114,97,114,121,32,105,109,112,111,114,
-116,32,102,102,105,44,32,108,105,98,10,
+// """"Этот """
+34,34,34,34,1069,1090,1086,1090,32,34,34,34,10,
+//
+10,
+//
+10,
+// from python_graphics import ffi, lib
+102,114,111,109,32,112,121,116,104,111,110,95,103,114,97,112,104,105,99,115,
+32,105,109,112,111,114,116,32,102,102,105,44,32,108,105,98,10,
 //
 10,
 // import sys
 105,109,112,111,114,116,32,115,121,115,10,
 // import os
 105,109,112,111,114,116,32,111,115,10,
+//
+10,
+//
+10,
 // sys.path.insert(0, r"C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38\lib\site-packages")
 115,121,115,46,112,97,116,104,46,105,110,115,101,114,116,40,48,44,32,114,34,
 67,58,92,85,115,101,114,115,92,65,99,101,114,92,65,112,112,68,97,116,97,92,76,
@@ -774,6 +784,72 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 97,98,108,101,41,10,
 //     return 7
 32,32,32,32,114,101,116,117,114,110,32,55,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def draw_point_python(canvas: int, x: float, y: float):
+100,101,102,32,100,114,97,119,95,112,111,105,110,116,95,112,121,116,104,111,
+110,40,99,97,110,118,97,115,58,32,105,110,116,44,32,120,58,32,102,108,111,97,
+116,44,32,121,58,32,102,108,111,97,116,41,58,10,
+//     print(f'рисую на канвасе {canvas} точку (x = {int(x)}, y = {int(y)})')
+32,32,32,32,112,114,105,110,116,40,102,39,1088,1080,1089,1091,1102,32,1085,1072,
+32,1082,1072,1085,1074,1072,1089,1077,32,123,99,97,110,118,97,115,125,32,1090,
+1086,1095,1082,1091,32,40,120,32,61,32,123,105,110,116,40,120,41,125,44,32,121,
+32,61,32,123,105,110,116,40,121,41,125,41,39,41,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
+100,101,102,32,100,114,97,119,95,108,105,110,101,95,112,121,116,104,111,110,
+40,99,97,110,118,97,115,58,32,105,110,116,44,32,120,49,58,32,102,108,111,97,
+116,44,32,121,49,58,32,102,108,111,97,116,44,32,120,50,58,32,102,108,111,97,
+116,44,32,121,50,58,32,102,108,111,97,116,41,58,10,
+//     print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
+32,32,32,32,112,114,105,110,116,40,102,39,1088,1080,1089,1091,1102,32,1085,1072,
+32,1082,1072,1085,1074,1072,1089,1077,32,123,99,97,110,118,97,115,125,32,1083,
+1080,1085,1080,1102,32,120,49,45,50,32,61,32,123,105,110,116,40,120,49,41,125,
+32,45,32,123,105,110,116,40,120,50,41,125,44,32,121,32,61,32,123,105,110,116,
+40,121,49,41,125,32,45,32,123,105,110,116,40,121,50,41,125,39,41,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def create_canvas(h=None, weight=None) -> int:
+100,101,102,32,99,114,101,97,116,101,95,99,97,110,118,97,115,40,104,61,78,111,
+110,101,44,32,119,101,105,103,104,116,61,78,111,110,101,41,32,45,62,32,105,110,
+116,58,10,
+//     global obj_dict, counter
+32,32,32,32,103,108,111,98,97,108,32,111,98,106,95,100,105,99,116,44,32,99,111,
+117,110,116,101,114,10,
+//     if h and weight:
+32,32,32,32,105,102,32,104,32,97,110,100,32,119,101,105,103,104,116,58,10,
+//         print(f'создаю канвас размерами высота = {h}, ширина = {weight}')
+32,32,32,32,32,32,32,32,112,114,105,110,116,40,102,39,1089,1086,1079,1076,1072,
+1102,32,1082,1072,1085,1074,1072,1089,32,1088,1072,1079,1084,1077,1088,1072,
+1084,1080,32,1074,1099,1089,1086,1090,1072,32,61,32,123,104,125,44,32,1096,1080,
+1088,1080,1085,1072,32,61,32,123,119,101,105,103,104,116,125,39,41,10,
+//     else:
+32,32,32,32,101,108,115,101,58,10,
+//         print('оспользую открытую консоль')
+32,32,32,32,32,32,32,32,112,114,105,110,116,40,39,1086,1089,1087,1086,1083,1100,
+1079,1091,1102,32,1086,1090,1082,1088,1099,1090,1091,1102,32,1082,1086,1085,
+1089,1086,1083,1100,39,41,10,
+//     counter += 1
+32,32,32,32,99,111,117,110,116,101,114,32,43,61,32,49,10,
+//     obj_dict[counter] = 'канвас' + str(counter)
+32,32,32,32,111,98,106,95,100,105,99,116,91,99,111,117,110,116,101,114,93,32,
+61,32,39,1082,1072,1085,1074,1072,1089,39,32,43,32,115,116,114,40,99,111,117,
+110,116,101,114,41,10,
+//     return counter
+32,32,32,32,114,101,116,117,114,110,32,99,111,117,110,116,101,114,10,
 0 };
 #ifdef PYPY_VERSION
 # define _CFFI_PYTHON_STARTUP_FUNC  _cffi_pypyinit_python_graphics
@@ -1463,11 +1539,31 @@ static void *_cffi_types[] = {
 /*  4 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(int)
 /*  5 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7), // int
 /*  6 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(void)
-/*  8 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/*  9 */ _CFFI_OP(_CFFI_OP_POINTER, 0), // float(*)(float, float)
-/* 10 */ _CFFI_OP(_CFFI_OP_POINTER, 4), // int(*)(int)
-/* 11 */ _CFFI_OP(_CFFI_OP_POINTER, 7), // int(*)(void)
+/*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(int, int)
+/*  8 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/*  9 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 10 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 11 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(void)
+/* 12 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 13 */ _CFFI_OP(_CFFI_OP_FUNCTION, 31), // void()(int, int, int)
+/* 14 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 15 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 16 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 17 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 18 */ _CFFI_OP(_CFFI_OP_FUNCTION, 31), // void()(int, int, int, int, int)
+/* 19 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 20 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 21 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 22 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 23 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 24 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 25 */ _CFFI_OP(_CFFI_OP_POINTER, 0), // float(*)(float, float)
+/* 26 */ _CFFI_OP(_CFFI_OP_POINTER, 4), // int(*)(int)
+/* 27 */ _CFFI_OP(_CFFI_OP_POINTER, 7), // int(*)(int, int)
+/* 28 */ _CFFI_OP(_CFFI_OP_POINTER, 11), // int(*)(void)
+/* 29 */ _CFFI_OP(_CFFI_OP_POINTER, 13), // void(*)(int, int, int)
+/* 30 */ _CFFI_OP(_CFFI_OP_POINTER, 18), // void(*)(int, int, int, int, int)
+/* 31 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
 };
 
 static struct _cffi_externpy_s _cffi_externpy__compute =
@@ -1483,6 +1579,19 @@ CFFI_DLLEXPORT float compute(float a0, float a1)
   return *(float *)p;
 }
 
+static struct _cffi_externpy_s _cffi_externpy__create_canvas =
+  { "python_graphics.create_canvas", (int)sizeof(int), 0, 0 };
+
+CFFI_DLLEXPORT int create_canvas(int a0, int a1)
+{
+  char a[16];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  *(int *)(p + 8) = a1;
+  _cffi_call_python(&_cffi_externpy__create_canvas, p);
+  return *(int *)p;
+}
+
 static struct _cffi_externpy_s _cffi_externpy__create_obj =
   { "python_graphics.create_obj", (int)sizeof(int), 0, 0 };
 
@@ -1493,6 +1602,34 @@ CFFI_DLLEXPORT int create_obj(int a0)
   *(int *)(p + 0) = a0;
   _cffi_call_python(&_cffi_externpy__create_obj, p);
   return *(int *)p;
+}
+
+static struct _cffi_externpy_s _cffi_externpy__draw_line_python =
+  { "python_graphics.draw_line_python", 0, 0, 0 };
+
+CFFI_DLLEXPORT void draw_line_python(int a0, int a1, int a2, int a3, int a4)
+{
+  char a[40];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  *(int *)(p + 8) = a1;
+  *(int *)(p + 16) = a2;
+  *(int *)(p + 24) = a3;
+  *(int *)(p + 32) = a4;
+  _cffi_call_python(&_cffi_externpy__draw_line_python, p);
+}
+
+static struct _cffi_externpy_s _cffi_externpy__draw_point_python =
+  { "python_graphics.draw_point_python", 0, 0, 0 };
+
+CFFI_DLLEXPORT void draw_point_python(int a0, int a1, int a2)
+{
+  char a[24];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  *(int *)(p + 8) = a1;
+  *(int *)(p + 16) = a2;
+  _cffi_call_python(&_cffi_externpy__draw_point_python, p);
 }
 
 static struct _cffi_externpy_s _cffi_externpy__my_python_print =
@@ -1519,10 +1656,13 @@ CFFI_DLLEXPORT int print_class(int a0)
 }
 
 static const struct _cffi_global_s _cffi_globals[] = {
-  { "compute", (void *)&_cffi_externpy__compute, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 9), (void *)compute },
-  { "create_obj", (void *)&_cffi_externpy__create_obj, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 10), (void *)create_obj },
-  { "my_python_print", (void *)&_cffi_externpy__my_python_print, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 11), (void *)my_python_print },
-  { "print_class", (void *)&_cffi_externpy__print_class, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 10), (void *)print_class },
+  { "compute", (void *)&_cffi_externpy__compute, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 25), (void *)compute },
+  { "create_canvas", (void *)&_cffi_externpy__create_canvas, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 27), (void *)create_canvas },
+  { "create_obj", (void *)&_cffi_externpy__create_obj, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 26), (void *)create_obj },
+  { "draw_line_python", (void *)&_cffi_externpy__draw_line_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 30), (void *)draw_line_python },
+  { "draw_point_python", (void *)&_cffi_externpy__draw_point_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 29), (void *)draw_point_python },
+  { "my_python_print", (void *)&_cffi_externpy__my_python_print, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 28), (void *)my_python_print },
+  { "print_class", (void *)&_cffi_externpy__print_class, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 26), (void *)print_class },
 };
 
 static const struct _cffi_type_context_s _cffi_type_context = {
@@ -1532,12 +1672,12 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   NULL,  /* no struct_unions */
   NULL,  /* no enums */
   NULL,  /* no typenames */
-  4,  /* num_globals */
+  7,  /* num_globals */
   0,  /* num_struct_unions */
   0,  /* num_enums */
   0,  /* num_typenames */
   NULL,  /* no includes */
-  12,  /* num_types */
+  32,  /* num_types */
   1,  /* flags */
 };
 
