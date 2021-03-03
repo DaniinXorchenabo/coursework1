@@ -100,6 +100,9 @@ def draw_point_python(canvas: int, x: float, y: float):
 @ffi.def_extern()
 def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
     print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
+    print('рисую1', end='||')
+    print(r'рисую1', end='||')
+    print(rf'рисую{3}')
 
 
 @ffi.def_extern()
