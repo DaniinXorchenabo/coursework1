@@ -7,6 +7,7 @@
 //#include "python_graphics.h"
 
 typedef void (*VoidReturnFunc)();
+typedef void (*VoidReturnFunc1int)(int);
 typedef int (*intReturnFunc)();
 typedef int (*intReturnFunc1int)(int);
 typedef int (*intReturnFunc2int)(int, int);
@@ -21,8 +22,10 @@ typedef void (*VoidReturnFunc5int)(int, int, int, int, int);
 
    intReturnFunc1int init_console = (intReturnFunc1int) GetProcAddress(a, "create_obj");
    intReturnFunc1int print_class = (intReturnFunc1int) GetProcAddress(a, "print_class");
+   intReturnFunc2int create_canvas = (intReturnFunc2int) GetProcAddress(a, "create_canvas");
    VoidReturnFunc3int draw_point_python = (VoidReturnFunc3int) GetProcAddress(a, "draw_point_python");
    VoidReturnFunc5int draw_line_python =  (VoidReturnFunc5int) GetProcAddress(a, "draw_line_python");
+   VoidReturnFunc1int refresh_python =  (VoidReturnFunc1int)  GetProcAddress(a, "refresh_python");
 
 using namespace std;
 
@@ -232,20 +235,21 @@ class BaseFigure{
 int main(){
 
 
-   int my_obj = init_console(5694);
-   print_class(my_obj);
-    BaseFigure one(1, { Point(1,1,1), Point(1,1,2),Point(1,1,3),Point(1,1,4),Point(1,1,5) });
-    BaseFigure one_1(1, { Point(1,2,1), Point(1,2,2),Point(1,2,3),Point(1,2,4),Point(1,2,5) });
-    BaseFigure one_3(1, { Point(1,3,1), Point(1,3,2),Point(1,3,3),Point(1,3,4),Point(1,3,5) });
+   int canvas = create_canvas(0, 0);
+//   print_class(my_obj);
+    BaseFigure one(canvas, { Point(canvas,10,10), Point(canvas,10,40),Point(canvas, 40,40),Point(canvas,40,10) });
+    BaseFigure one_1(canvas, { Point(canvas,50,20), Point(canvas,50,50),Point(canvas,75,70),Point(canvas,100,50),Point(canvas,100,20) });
+    BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
 
     BaseFigure one_4 = one + one_1 + one_3;
     one_4.draw();
-    cout<<"0**********----!!"<<endl;
+
     one.draw();
-    cout<<"1**********----!!"<<endl;
+
     one_1.draw();
-    cout<<"2**********----!!"<<endl;
+
     one_3.draw();
+    refresh_python(canvas);
     getch();
     return 0;
 }
