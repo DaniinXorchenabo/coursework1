@@ -99,19 +99,48 @@ def draw_point_python(canvas: int, x: float, y: float):
 
 @ffi.def_extern()
 def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
-    print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
-    print('рисую1', end='||')
-    print(r'рисую1', end='||')
-    print(rf'рисую{3}')
+    obj_dict[canvas].move(x1, y1)
+    obj_dict[canvas].draw(x2, y2)
+    # print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
+    # print('рисую1', end='||')
+    # print(r'рисую1', end='||')
+    # print(rf'рисую{3}')
 
 
 @ffi.def_extern()
 def create_canvas(h=None, weight=None) -> int:
+    screen = Screen.open(None,
+                         catch_interrupt=False,
+                         unicode_aware=None)
+
+    print(screen.height, screen.width)
+    from time import sleep
+
+    sleep(10)
+    # restore = True
+    # try:
+    #     try:
+    #         return func(screen)
+    #     except ResizeScreenError:
+    #         restore = False
+    #         raise
+    # finally:
+    #     screen.close(restore)
+
     global obj_dict, counter
     if h and weight:
         print(f'создаю канвас размерами высота = {h}, ширина = {weight}')
     else:
         print('оспользую открытую консоль')
     counter += 1
-    obj_dict[counter] = 'канвас' + str(counter)
+    obj_dict[counter] = screen
+
     return counter
+
+
+@ffi.def_extern()
+def refresh_python(canvas: int):
+    obj_dict[canvas].refresh()
+
+
+

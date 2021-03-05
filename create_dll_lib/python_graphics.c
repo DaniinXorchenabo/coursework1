@@ -810,21 +810,28 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 40,99,97,110,118,97,115,58,32,105,110,116,44,32,120,49,58,32,102,108,111,97,
 116,44,32,121,49,58,32,102,108,111,97,116,44,32,120,50,58,32,102,108,111,97,
 116,44,32,121,50,58,32,102,108,111,97,116,41,58,10,
-//     print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
-32,32,32,32,112,114,105,110,116,40,102,39,1088,1080,1089,1091,1102,32,1085,1072,
-32,1082,1072,1085,1074,1072,1089,1077,32,123,99,97,110,118,97,115,125,32,1083,
-1080,1085,1080,1102,32,120,49,45,50,32,61,32,123,105,110,116,40,120,49,41,125,
-32,45,32,123,105,110,116,40,120,50,41,125,44,32,121,32,61,32,123,105,110,116,
-40,121,49,41,125,32,45,32,123,105,110,116,40,121,50,41,125,39,41,10,
-//     print('рисую1', end='||')
-32,32,32,32,112,114,105,110,116,40,39,1088,1080,1089,1091,1102,49,39,44,32,101,
-110,100,61,39,124,124,39,41,10,
-//     print(r'рисую1', end='||')
-32,32,32,32,112,114,105,110,116,40,114,39,1088,1080,1089,1091,1102,49,39,44,
+//     obj_dict[canvas].move(x1, y1)
+32,32,32,32,111,98,106,95,100,105,99,116,91,99,97,110,118,97,115,93,46,109,111,
+118,101,40,120,49,44,32,121,49,41,10,
+//     obj_dict[canvas].draw(x2, y2)
+32,32,32,32,111,98,106,95,100,105,99,116,91,99,97,110,118,97,115,93,46,100,114,
+97,119,40,120,50,44,32,121,50,41,10,
+//     # print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
+32,32,32,32,35,32,112,114,105,110,116,40,102,39,1088,1080,1089,1091,1102,32,
+1085,1072,32,1082,1072,1085,1074,1072,1089,1077,32,123,99,97,110,118,97,115,
+125,32,1083,1080,1085,1080,1102,32,120,49,45,50,32,61,32,123,105,110,116,40,
+120,49,41,125,32,45,32,123,105,110,116,40,120,50,41,125,44,32,121,32,61,32,123,
+105,110,116,40,121,49,41,125,32,45,32,123,105,110,116,40,121,50,41,125,39,41,
+10,
+//     # print('рисую1', end='||')
+32,32,32,32,35,32,112,114,105,110,116,40,39,1088,1080,1089,1091,1102,49,39,44,
 32,101,110,100,61,39,124,124,39,41,10,
-//     print(rf'рисую{3}')
-32,32,32,32,112,114,105,110,116,40,114,102,39,1088,1080,1089,1091,1102,123,51,
-125,39,41,10,
+//     # print(r'рисую1', end='||')
+32,32,32,32,35,32,112,114,105,110,116,40,114,39,1088,1080,1089,1091,1102,49,
+39,44,32,101,110,100,61,39,124,124,39,41,10,
+//     # print(rf'рисую{3}')
+32,32,32,32,35,32,112,114,105,110,116,40,114,102,39,1088,1080,1089,1091,1102,
+123,51,125,39,41,10,
 //
 10,
 //
@@ -835,6 +842,52 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 100,101,102,32,99,114,101,97,116,101,95,99,97,110,118,97,115,40,104,61,78,111,
 110,101,44,32,119,101,105,103,104,116,61,78,111,110,101,41,32,45,62,32,105,110,
 116,58,10,
+//     screen = Screen.open(None,
+32,32,32,32,115,99,114,101,101,110,32,61,32,83,99,114,101,101,110,46,111,112,
+101,110,40,78,111,110,101,44,10,
+//                          catch_interrupt=False,
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,99,
+97,116,99,104,95,105,110,116,101,114,114,117,112,116,61,70,97,108,115,101,44,
+10,
+//                          unicode_aware=None)
+32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,117,
+110,105,99,111,100,101,95,97,119,97,114,101,61,78,111,110,101,41,10,
+//
+10,
+//     print(screen.height, screen.width)
+32,32,32,32,112,114,105,110,116,40,115,99,114,101,101,110,46,104,101,105,103,
+104,116,44,32,115,99,114,101,101,110,46,119,105,100,116,104,41,10,
+//     from time import sleep
+32,32,32,32,102,114,111,109,32,116,105,109,101,32,105,109,112,111,114,116,32,
+115,108,101,101,112,10,
+//
+10,
+//     sleep(10)
+32,32,32,32,115,108,101,101,112,40,49,48,41,10,
+//     # restore = True
+32,32,32,32,35,32,114,101,115,116,111,114,101,32,61,32,84,114,117,101,10,
+//     # try:
+32,32,32,32,35,32,116,114,121,58,10,
+//     #     try:
+32,32,32,32,35,32,32,32,32,32,116,114,121,58,10,
+//     #         return func(screen)
+32,32,32,32,35,32,32,32,32,32,32,32,32,32,114,101,116,117,114,110,32,102,117,
+110,99,40,115,99,114,101,101,110,41,10,
+//     #     except ResizeScreenError:
+32,32,32,32,35,32,32,32,32,32,101,120,99,101,112,116,32,82,101,115,105,122,101,
+83,99,114,101,101,110,69,114,114,111,114,58,10,
+//     #         restore = False
+32,32,32,32,35,32,32,32,32,32,32,32,32,32,114,101,115,116,111,114,101,32,61,
+32,70,97,108,115,101,10,
+//     #         raise
+32,32,32,32,35,32,32,32,32,32,32,32,32,32,114,97,105,115,101,10,
+//     # finally:
+32,32,32,32,35,32,102,105,110,97,108,108,121,58,10,
+//     #     screen.close(restore)
+32,32,32,32,35,32,32,32,32,32,115,99,114,101,101,110,46,99,108,111,115,101,40,
+114,101,115,116,111,114,101,41,10,
+//
+10,
 //     global obj_dict, counter
 32,32,32,32,103,108,111,98,97,108,32,111,98,106,95,100,105,99,116,44,32,99,111,
 117,110,116,101,114,10,
@@ -853,12 +906,31 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 1089,1086,1083,1100,39,41,10,
 //     counter += 1
 32,32,32,32,99,111,117,110,116,101,114,32,43,61,32,49,10,
-//     obj_dict[counter] = 'канвас' + str(counter)
+//     obj_dict[counter] = screen
 32,32,32,32,111,98,106,95,100,105,99,116,91,99,111,117,110,116,101,114,93,32,
-61,32,39,1082,1072,1085,1074,1072,1089,39,32,43,32,115,116,114,40,99,111,117,
-110,116,101,114,41,10,
+61,32,115,99,114,101,101,110,10,
+//
+10,
 //     return counter
 32,32,32,32,114,101,116,117,114,110,32,99,111,117,110,116,101,114,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def refresh_python(canvas: int):
+100,101,102,32,114,101,102,114,101,115,104,95,112,121,116,104,111,110,40,99,
+97,110,118,97,115,58,32,105,110,116,41,58,10,
+//     obj_dict[canvas].refresh()
+32,32,32,32,111,98,106,95,100,105,99,116,91,99,97,110,118,97,115,93,46,114,101,
+102,114,101,115,104,40,41,10,
+//
+10,
+//
+10,
+//
+10,
 0 };
 #ifdef PYPY_VERSION
 # define _CFFI_PYTHON_STARTUP_FUNC  _cffi_pypyinit_python_graphics
@@ -1554,25 +1626,29 @@ static void *_cffi_types[] = {
 /* 10 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 /* 11 */ _CFFI_OP(_CFFI_OP_FUNCTION, 5), // int()(void)
 /* 12 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 13 */ _CFFI_OP(_CFFI_OP_FUNCTION, 31), // void()(int, int, int)
+/* 13 */ _CFFI_OP(_CFFI_OP_FUNCTION, 35), // void()(int)
 /* 14 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 15 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 16 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 17 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 18 */ _CFFI_OP(_CFFI_OP_FUNCTION, 31), // void()(int, int, int, int, int)
+/* 15 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 16 */ _CFFI_OP(_CFFI_OP_FUNCTION, 35), // void()(int, int, int)
+/* 17 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 18 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /* 19 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 20 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 21 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 20 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 21 */ _CFFI_OP(_CFFI_OP_FUNCTION, 35), // void()(int, int, int, int, int)
 /* 22 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /* 23 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
-/* 24 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
-/* 25 */ _CFFI_OP(_CFFI_OP_POINTER, 0), // float(*)(float, float)
-/* 26 */ _CFFI_OP(_CFFI_OP_POINTER, 4), // int(*)(int)
-/* 27 */ _CFFI_OP(_CFFI_OP_POINTER, 7), // int(*)(int, int)
-/* 28 */ _CFFI_OP(_CFFI_OP_POINTER, 11), // int(*)(void)
-/* 29 */ _CFFI_OP(_CFFI_OP_POINTER, 13), // void(*)(int, int, int)
-/* 30 */ _CFFI_OP(_CFFI_OP_POINTER, 18), // void(*)(int, int, int, int, int)
-/* 31 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
+/* 24 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 25 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 26 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 27 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/* 28 */ _CFFI_OP(_CFFI_OP_POINTER, 0), // float(*)(float, float)
+/* 29 */ _CFFI_OP(_CFFI_OP_POINTER, 4), // int(*)(int)
+/* 30 */ _CFFI_OP(_CFFI_OP_POINTER, 7), // int(*)(int, int)
+/* 31 */ _CFFI_OP(_CFFI_OP_POINTER, 11), // int(*)(void)
+/* 32 */ _CFFI_OP(_CFFI_OP_POINTER, 13), // void(*)(int)
+/* 33 */ _CFFI_OP(_CFFI_OP_POINTER, 16), // void(*)(int, int, int)
+/* 34 */ _CFFI_OP(_CFFI_OP_POINTER, 21), // void(*)(int, int, int, int, int)
+/* 35 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 0), // void
 };
 
 static struct _cffi_externpy_s _cffi_externpy__compute =
@@ -1664,14 +1740,26 @@ CFFI_DLLEXPORT int print_class(int a0)
   return *(int *)p;
 }
 
+static struct _cffi_externpy_s _cffi_externpy__refresh_python =
+  { "python_graphics.refresh_python", 0, 0, 0 };
+
+CFFI_DLLEXPORT void refresh_python(int a0)
+{
+  char a[8];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  _cffi_call_python(&_cffi_externpy__refresh_python, p);
+}
+
 static const struct _cffi_global_s _cffi_globals[] = {
-  { "compute", (void *)&_cffi_externpy__compute, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 25), (void *)compute },
-  { "create_canvas", (void *)&_cffi_externpy__create_canvas, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 27), (void *)create_canvas },
-  { "create_obj", (void *)&_cffi_externpy__create_obj, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 26), (void *)create_obj },
-  { "draw_line_python", (void *)&_cffi_externpy__draw_line_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 30), (void *)draw_line_python },
-  { "draw_point_python", (void *)&_cffi_externpy__draw_point_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 29), (void *)draw_point_python },
-  { "my_python_print", (void *)&_cffi_externpy__my_python_print, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 28), (void *)my_python_print },
-  { "print_class", (void *)&_cffi_externpy__print_class, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 26), (void *)print_class },
+  { "compute", (void *)&_cffi_externpy__compute, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 28), (void *)compute },
+  { "create_canvas", (void *)&_cffi_externpy__create_canvas, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 30), (void *)create_canvas },
+  { "create_obj", (void *)&_cffi_externpy__create_obj, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 29), (void *)create_obj },
+  { "draw_line_python", (void *)&_cffi_externpy__draw_line_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 34), (void *)draw_line_python },
+  { "draw_point_python", (void *)&_cffi_externpy__draw_point_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 33), (void *)draw_point_python },
+  { "my_python_print", (void *)&_cffi_externpy__my_python_print, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 31), (void *)my_python_print },
+  { "print_class", (void *)&_cffi_externpy__print_class, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 29), (void *)print_class },
+  { "refresh_python", (void *)&_cffi_externpy__refresh_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 32), (void *)refresh_python },
 };
 
 static const struct _cffi_type_context_s _cffi_type_context = {
@@ -1681,12 +1769,12 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   NULL,  /* no struct_unions */
   NULL,  /* no enums */
   NULL,  /* no typenames */
-  7,  /* num_globals */
+  8,  /* num_globals */
   0,  /* num_struct_unions */
   0,  /* num_enums */
   0,  /* num_typenames */
   NULL,  /* no includes */
-  32,  /* num_types */
+  36,  /* num_types */
   1,  /* flags */
 };
 
