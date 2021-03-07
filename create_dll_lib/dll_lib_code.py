@@ -18,6 +18,7 @@ from asciimatics.effects import Cycle, Stars
 from asciimatics.renderers import FigletText
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
+from asciimatics import event
 
 
 obj_dict = {}
@@ -97,14 +98,13 @@ def draw_point_python(canvas: int, x: float, y: float):
     print(f'рисую на канвасе {canvas} точку (x = {int(x)}, y = {int(y)})')
 
 
+
+
 @ffi.def_extern()
 def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
     obj_dict[canvas].move(x1, y1)
     obj_dict[canvas].draw(x2, y2)
-    # print(f'рисую на канвасе {canvas} линию x1-2 = {int(x1)} - {int(x2)}, y = {int(y1)} - {int(y2)}')
-    # print('рисую1', end='||')
-    # print(r'рисую1', end='||')
-    # print(rf'рисую{3}')
+    # print(round(x1), round(y1), round(x2), round(y2))
 
 
 @ffi.def_extern()
@@ -141,6 +141,15 @@ def create_canvas(h=None, weight=None) -> int:
 @ffi.def_extern()
 def refresh_python(canvas: int):
     obj_dict[canvas].refresh()
+    obj_dict[canvas].clear_buffer(Screen.COLOUR_WHITE, 0, Screen.COLOUR_BLACK)
 
 
+@ffi.def_extern()
+def exit_console_python(canvas: int):
+    obj_dict[canvas].close()
 
+
+@ffi.def_extern()
+def check_exit_button_python(canvas: int) -> bool:
+    ev = obj_dict[canvas].get_event()
+    return type(ev) == event.KeyboardEvent and ev.key_code in [81, 113, -1]
