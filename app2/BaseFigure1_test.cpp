@@ -4,6 +4,7 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <cmath>
 //#include "python_graphics.h"
 
 typedef void (*VoidReturnFunc)();
@@ -38,7 +39,7 @@ using namespace std;
 class Point{
 
     private:
-        float x, y;
+        float x, y, radius = 0;
         int canvas;
 
     public:
@@ -54,11 +55,28 @@ class Point{
             return y;
         }
 
+        void reboot_radius() {
+            radius = 0;
+        }
+
         int get_x() const {
             return (int)x;
         }
         int get_y() const {
             return (int)y;
+        }
+        pair<float, float> get_polar_coord(float c_x, float c_y){
+            float r_y = y - c_y;
+            float r_x = x - c_x;
+            if (radius == 0){
+                radius = sqrt(r_x * r_x + r_y * r_y);
+            }
+            return {radius, atan2(r_y, r_x)};
+        }
+
+        void set_polar_coord(float r, float angle, float c_x, float c_y){
+            x = r * cos(angle) + c_x;
+            y = r * sin(angle) + c_y;
         }
 
         void move_point(float add_x, float add_y){
@@ -114,7 +132,7 @@ class BaseFigure{
         int canvas;
         float speed_x = 0.015;
         float speed_y = 0.005;
-        float speed_rotation = 0;
+        float speed_rotation = 0.01;
 
     public:
         list<shared_ptr<BaseFigure>> complex_figure = {};
@@ -127,6 +145,60 @@ class BaseFigure{
 
         int get_canvas() const {
             return canvas;
+        }
+
+        tuple<float, float, int> get_raw_center_point(){
+            float x = 0, y = 0;
+            int counter = 0;
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    auto [new_x, new_y, new_counter] = figure->get_raw_center_point();
+                    x += new_x;
+                    y += new_y;
+                    counter += new_counter;
+                }
+            } else {
+                for (auto point: points_with_line){
+                    x += point->get_raw_x();
+                    y += point->get_raw_y();
+                    ++counter;
+                }
+                if (counter == 0){
+                    for (auto point: points_no_line){
+                        x += point->get_raw_x();
+                        y += point->get_raw_y();
+                        ++counter;
+                    }
+                }
+            }
+            return {x, y ,counter};
+        }
+
+        pair<float, float> get_center_point(){
+            float x = 0, y = 0;
+            int counter = 0;
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    auto [new_x, new_y, new_counter] = figure->get_raw_center_point();
+                    x += new_x;
+                    y += new_y;
+                    counter += new_counter;
+                }
+            } else {
+                for (auto point: points_with_line){
+                    x += point->get_raw_x();
+                    y += point->get_raw_y();
+                    ++counter;
+                }
+                if (counter == 0){
+                    for (auto point: points_no_line){
+                        x += point->get_raw_x();
+                        y += point->get_raw_y();
+                        ++counter;
+                    }
+                }
+            }
+            return {x / counter, y / counter};
         }
 
         BaseFigure(){}
@@ -160,8 +232,7 @@ class BaseFigure{
                 for (auto figure: complex_figure){
                     figure->draw();
                 }
-            }
-            else {
+            } else {
                 auto first_point = points_with_line.back();
                 for (auto second_point: points_with_line){
                     first_point->draw_line(*second_point);
@@ -181,24 +252,48 @@ class BaseFigure{
                     figure->move_figure(add_x, add_y);
                 }
             } else {
-                cout<<"!!!!!!--------------\n";
                 for (auto point: points_no_line){
                     point->move_point(add_x, add_y);
-                    cout<<"!!@@@@--------------\n";
+
                 }
                 for (auto point: points_with_line){
                     point->move_point(add_x, add_y);
-                    cout<<"!!@@@@--------------\n";
+
                 }
             }
         }
 
-        void rotation_figure(){}
+        void rotation_figure(){
+            auto [center_x, center_y] = get_center_point();
+            rotation_figure(center_x, center_y);
+        }
+        void rotation_figure(float center_x, float center_y){
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    figure->rotation_figure(center_x, center_y);
+                }
+            } else {
+                for (auto point: points_with_line){
+                    auto [r, angle] = point->get_polar_coord(center_x, center_y);
+                    angle += speed_rotation;
+                    point->set_polar_coord(r, angle, center_x, center_y);
+                }
+                for (auto point: points_no_line){
+                    auto [r, angle] = point->get_polar_coord(center_x, center_y);
+                    angle += speed_rotation;
+                    point->set_polar_coord(r, angle, center_x, center_y);
+                }
+            }
+        }
 
         void renderer(){
             move_figure(speed_x, speed_y);
-//            rotation_figure();
+            rotation_figure();
             draw();
+        }
+
+        void reboot_radius(){
+
         }
 
         BaseFigure& operator+=(const BaseFigure& other_figure) {
@@ -225,7 +320,6 @@ class BaseFigure{
                 auto a = other_figure.complex_figure;
                 complex_figure.merge(a);
             }
-
             return *this;
         }
 
@@ -266,6 +360,7 @@ int main(){
    int canvas = create_canvas(0, 0);
 //   print_class(my_obj);
     BaseFigure one(canvas, { Point(canvas,10,10), Point(canvas,10,40),Point(canvas, 40,40),Point(canvas,40,10) });
+    BaseFigure line(canvas, { Point(canvas,65,10), Point(canvas,100,10)});
 //    BaseFigure one_1(canvas, { Point(canvas,50,20), Point(canvas,50,50),Point(canvas,75,70),Point(canvas,100,50),Point(canvas,100,20) });
 //    BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
 
@@ -280,6 +375,7 @@ int main(){
     int counter = 0;
     while (true){
         one.renderer();
+        line.renderer();
 //        one_1.renderer();
 //        one_3.renderer();
         refresh_python(canvas);
@@ -290,6 +386,7 @@ int main(){
 //        cout<<counter++;
 //        cout<<"\n";
     }
+    cout<<sqrt(24)<<endl;
 
 //    getch();
     return 0;
