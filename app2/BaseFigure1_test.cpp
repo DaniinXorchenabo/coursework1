@@ -39,7 +39,7 @@ using namespace std;
 class Point{
 
     private:
-        float x, y, radius = 0;
+        float x, y, radius = -1;
         int canvas;
 
     public:
@@ -56,7 +56,7 @@ class Point{
         }
 
         void reboot_radius() {
-            radius = 0;
+            radius = -1;
         }
 
         int get_x() const {
@@ -68,7 +68,7 @@ class Point{
         pair<float, float> get_polar_coord(float c_x, float c_y){
             float r_y = y - c_y;
             float r_x = x - c_x;
-            if (radius == 0){
+            if (radius == -1){
                 radius = sqrt(r_x * r_x + r_y * r_y);
             }
             return {radius, atan2(r_y, r_x)};
@@ -293,7 +293,18 @@ class BaseFigure{
         }
 
         void reboot_radius(){
-
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    figure->reboot_radius();
+                }
+            } else {
+                for (auto point: points_with_line){
+                    point->reboot_radius();
+                }
+                for (auto point: points_no_line){
+                    point->reboot_radius();
+                }
+            }
         }
 
         BaseFigure& operator+=(const BaseFigure& other_figure) {
@@ -320,6 +331,7 @@ class BaseFigure{
                 auto a = other_figure.complex_figure;
                 complex_figure.merge(a);
             }
+            this->reboot_radius();
             return *this;
         }
 
@@ -347,7 +359,7 @@ class BaseFigure{
 //                complex_figure += right.complex_figure;
 //                complex_figure.merge(right.complex_figure);
             }
-
+            new_figure.reboot_radius();
             return new_figure;
         }
 
