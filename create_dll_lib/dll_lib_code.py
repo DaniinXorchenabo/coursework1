@@ -102,6 +102,8 @@ def draw_point_python(canvas: int, x: float, y: float):
 
 @ffi.def_extern()
 def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
+    y2 = y2 * 0.5723297
+    y1 = y1 * 0.5723297
     obj_dict[canvas].move(x1, y1)
     obj_dict[canvas].draw(x2, y2)
     # print(round(x1), round(y1), round(x2), round(y2))

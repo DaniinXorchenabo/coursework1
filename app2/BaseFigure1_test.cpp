@@ -246,7 +246,6 @@ class BaseFigure{
 
         void move_figure(){ move_figure(speed_x, speed_y); }
         void move_figure(float add_x, float add_y){
-            cout<<"--------------\n";
             if (complex_figure.size() > 1){
                 for (auto figure: complex_figure){
                     figure->move_figure(add_x, add_y);
@@ -372,9 +371,10 @@ int main(){
    int canvas = create_canvas(0, 0);
 //   print_class(my_obj);
     BaseFigure one(canvas, { Point(canvas,10,10), Point(canvas,10,40),Point(canvas, 40,40),Point(canvas,40,10) });
-    BaseFigure line(canvas, { Point(canvas,65,10), Point(canvas,100,10)});
+    BaseFigure line(canvas, { Point(canvas,60,40), Point(canvas,100,40)});
+//    BaseFigure line2(canvas, { Point(canvas,10,10), Point(canvas,10,50)});
 //    BaseFigure one_1(canvas, { Point(canvas,50,20), Point(canvas,50,50),Point(canvas,75,70),Point(canvas,100,50),Point(canvas,100,20) });
-//    BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
+    BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
 
 //    BaseFigure one_4 = one + one_1 + one_3;
 //    one_4.draw();
@@ -388,6 +388,8 @@ int main(){
     while (true){
         one.renderer();
         line.renderer();
+        one_3.renderer();
+//        line2.renderer();
 //        one_1.renderer();
 //        one_3.renderer();
         refresh_python(canvas);
