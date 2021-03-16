@@ -155,3 +155,15 @@ def exit_console_python(canvas: int):
 def check_exit_button_python(canvas: int) -> bool:
     ev = obj_dict[canvas].get_event()
     return type(ev) == event.KeyboardEvent and ev.key_code in [81, 113, -1]
+
+
+@ffi.def_extern()
+def get_console_x_size_python(canvas: int):
+    return obj_dict[canvas].width
+
+
+@ffi.def_extern()
+def get_console_y_size_python(canvas: int):
+    return int(obj_dict[canvas].height / 0.5723297)
+
+

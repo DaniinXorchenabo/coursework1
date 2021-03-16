@@ -25,6 +25,8 @@ typedef bool (*BoolReturnFunc1int)(int);
 
    intReturnFunc1int init_console = (intReturnFunc1int) GetProcAddress(a, "create_obj");
    intReturnFunc1int print_class = (intReturnFunc1int) GetProcAddress(a, "print_class");
+   intReturnFunc1int get_console_x_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_x_size_python");
+   intReturnFunc1int get_console_y_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_y_size_python");
    intReturnFunc2int create_canvas = (intReturnFunc2int) GetProcAddress(a, "create_canvas");
    VoidReturnFunc3int draw_point_python = (VoidReturnFunc3int) GetProcAddress(a, "draw_point_python");
    VoidReturnFunc1int4float draw_line_python =  (VoidReturnFunc1int4float) GetProcAddress(a, "draw_line_python");
@@ -65,6 +67,12 @@ class Point{
         int get_y() const {
             return (int)y;
         }
+
+        bool border_control(int max_x, int max_y){
+            // Вернет true, если точка находится в пределах экрана
+            return x >= 0 && y >= 0 && x <= max_x && y <= max_y;
+        }
+
         pair<float, float> get_polar_coord(float c_x, float c_y){
             float r_y = y - c_y;
             float r_x = x - c_x;
@@ -72,6 +80,10 @@ class Point{
                 radius = sqrt(r_x * r_x + r_y * r_y);
             }
             return {radius, atan2(r_y, r_x)};
+        }
+
+        pair<float, float> get_change_polar_coord(float r, float angle, float c_x, float c_y){
+            return {r * cos(angle) + c_x - x, r * sin(angle) + c_y - y};
         }
 
         void set_polar_coord(float r, float angle, float c_x, float c_y){
@@ -100,6 +112,26 @@ class Point{
             x = copy.get_raw_x();
             y = copy.get_raw_y();
         }
+
+        tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>>
+         get_extreme_points(tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> data){
+            auto [max_x, max_y, min_x, min_y] = data;
+            if (max_x->get_raw_x() <= x) max_x = make_shared<Point>(*this);
+            if (max_y->get_raw_y() <= y) max_y = make_shared<Point>(*this);
+            if (min_x->get_raw_x() >= x) min_x = make_shared<Point>(*this);
+            if (min_y->get_raw_y() >= y) min_y = make_shared<Point>(*this);
+            return {max_x, max_y, min_x, min_y};
+        }
+
+//        tuple<Point, Point, Point, Point> get_extreme_points(tuple<Point, Point, Point, Point> data){
+//            auto [max_x, max_y, min_x, min_y] = data;
+//            if (max_x.get_raw_x() <= x) max_x = Point(*this);
+//            if (max_y.get_raw_y() <= y) max_y = Point(*this);
+//            if (min_x.get_raw_x() >= x) min_x = Point(*this);
+//            if (min_y.get_raw_y() >= y) min_y = Point(*this);
+//            return {max_x, max_y, min_x, min_y};
+//        }
+
         void draw(){
             cout<<"Draw point";
             cout<<get_x();
@@ -130,9 +162,10 @@ class BaseFigure{
 
     private:
         int canvas;
-        float speed_x = 0.015;
-        float speed_y = 0.005;
-        float speed_rotation = 0.01;
+        float speed_x = 0.015 * 3;
+        float speed_y = 0.005 * 3;
+
+        float speed_rotation = 0.01 * 0;
 
     public:
         list<shared_ptr<BaseFigure>> complex_figure = {};
@@ -262,11 +295,12 @@ class BaseFigure{
             }
         }
 
-        void rotation_figure(){
+        pair<float, float> rotation_figure(){
             auto [center_x, center_y] = get_center_point();
             rotation_figure(center_x, center_y);
+            return {center_x, center_y};
         }
-        void rotation_figure(float center_x, float center_y){
+        pair<float, float> rotation_figure(float center_x, float center_y){
             if (complex_figure.size() > 1){
                 for (auto figure: complex_figure){
                     figure->rotation_figure(center_x, center_y);
@@ -283,11 +317,100 @@ class BaseFigure{
                     point->set_polar_coord(r, angle, center_x, center_y);
                 }
             }
+            return {center_x, center_y};
         }
 
-        void renderer(){
+//        bool border_control(int max_x, int max_y){
+//            bool be_console = true;
+//            if (complex_figure.size() > 1){
+//                for (auto figure: complex_figure){
+//                    be_console = be_console && figure->border_control(max_x, max_y);
+//                    if (!be_console){
+//                        return be_console;
+//                    }
+//                }
+//            } else {
+//                for (auto point: points_no_line){
+//                    be_console = be_console && point->border_control(max_x, max_y);
+//                    if (!be_console){
+//                        return be_console;
+//                    }
+//
+//                }
+//                for (auto point: points_with_line){
+//                    be_console = be_console && point->border_control(max_x, max_y);
+//                    if (!be_console){
+//                        return be_console;
+//                    }
+//
+//                }
+//            }
+//        }
+//
+//        void correcting_
+
+//        tuple<Point, Point, Point, Point> get_extreme_points(){
+tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> get_extreme_points(){
+            auto max_x = make_shared<Point>(0, -1000, 0);
+            auto max_y = make_shared<Point>(0, 0, -1000);
+            auto min_x =  make_shared<Point>(0, 10000, 0);
+            auto min_y = make_shared<Point>(0, 0, 10000);
+//            return {max_x, max_y, min_x, min_y};
+            return get_extreme_points({max_x, max_y, min_x, min_y});
+        }
+
+//        tuple<Point, Point, Point, Point> get_extreme_points(Point max_x, Point max_y, Point min_x, Point min_y){
+//        tuple<Point, Point, Point, Point> get_extreme_points(tuple<Point, Point, Point, Point> data){
+    tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> get_extreme_points(tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> data){
+            if (complex_figure.size() > 1){
+                for (auto figure: complex_figure){
+                    data = figure->get_extreme_points(data);
+                }
+            } else {
+                for (auto point: points_no_line){
+                    data = point->get_extreme_points(data);
+
+                }
+                for (auto point: points_with_line){
+                    data = point->get_extreme_points(data);
+
+                }
+            }
+            return data;
+        }
+
+        void border_regulate(int x_size, int y_size, float center_x, float center_y){
+            auto [max_x, max_y, min_x, min_y] = get_extreme_points();
+            if (x_size <= max_x->get_raw_x() && speed_x > 0) speed_x *= -1;
+            if (y_size <= max_y->get_raw_y() && speed_y > 0) speed_y *= -1;
+            if (0 >= min_x->get_raw_x() && speed_x < 0) speed_x *= -1;
+            if (0 >= min_y->get_raw_y() && speed_y < 0) speed_y *= -1;
+
+            auto [max_x_r, max_x_angle] = max_x->get_polar_coord(center_x, center_y);
+            auto [dx, useless_dy] = max_x->get_change_polar_coord(max_x_r, max_x_angle + speed_rotation, center_x, center_y);
+            auto [max_y_r, max_y_angle] = max_x->get_polar_coord(center_x, center_y);
+            auto [useless_dx, dy] = max_x->get_change_polar_coord(max_y_r, max_y_angle + speed_rotation, center_x, center_y);
+
+            auto [mim_x_r, min_x_angle] = max_x->get_polar_coord(center_x, center_y);
+            auto [min_dx, useless_dy1] = max_x->get_change_polar_coord(mim_x_r, min_x_angle + speed_rotation, center_x, center_y);
+            auto [min_y_r, min_y_angle] = max_x->get_polar_coord(center_x, center_y);
+            auto [useless_dx1, min_dy] = max_x->get_change_polar_coord(min_y_r, min_y_angle + speed_rotation, center_x, center_y);
+
+            if (x_size <= max_x->get_raw_x() && dx > 0) speed_rotation *= -1;
+            else if (y_size <= max_y->get_raw_y() && dy > 0) speed_rotation *= -1;
+            else if (0 >= min_x->get_raw_x() && min_dx < 0) speed_rotation *= -1;
+            else if (0 >= min_y->get_raw_y() && min_dy < 0) speed_rotation *= -1;
+
+        }
+
+
+
+        void renderer(int x_size, int y_size){
             move_figure(speed_x, speed_y);
-            rotation_figure();
+            auto [center_x, center_y] = rotation_figure();
+            border_regulate(x_size, y_size, center_x, center_y);
+
+//            border_control(max_x, max_y);
             draw();
         }
 
@@ -369,9 +492,12 @@ int main(){
 
 
    int canvas = create_canvas(0, 0);
+   int x = get_console_x_size_python(canvas);
+   int y = get_console_y_size_python(canvas);
 //   print_class(my_obj);
     BaseFigure one(canvas, { Point(canvas,10,10), Point(canvas,10,40),Point(canvas, 40,40),Point(canvas,40,10) });
-    BaseFigure line(canvas, { Point(canvas,60,40), Point(canvas,100,40)});
+//    BaseFigure line(canvas, { Point(canvas,x - 1,0), Point(canvas,x - 1,y - 1)});
+//    BaseFigure line2(canvas, { Point(canvas,0,y - 1), Point(canvas,x - 1,y - 1)});
 //    BaseFigure line2(canvas, { Point(canvas,10,10), Point(canvas,10,50)});
 //    BaseFigure one_1(canvas, { Point(canvas,50,20), Point(canvas,50,50),Point(canvas,75,70),Point(canvas,100,50),Point(canvas,100,20) });
     BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
@@ -386,9 +512,10 @@ int main(){
 //    one_3.draw();
     int counter = 0;
     while (true){
-        one.renderer();
-        line.renderer();
-        one_3.renderer();
+        one.renderer(x, y);
+//        line.renderer(x, y);
+//        line2.renderer(x, y);
+        one_3.renderer(x, y);
 //        line2.renderer();
 //        one_1.renderer();
 //        one_3.renderer();
@@ -400,7 +527,7 @@ int main(){
 //        cout<<counter++;
 //        cout<<"\n";
     }
-    cout<<sqrt(24)<<endl;
+    cout<<x<<y<<endl;
 
 //    getch();
     return 0;

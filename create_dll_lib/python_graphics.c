@@ -959,6 +959,40 @@ static const char _CFFI_PYTHON_STARTUP_CODE[] = {
 32,101,118,101,110,116,46,75,101,121,98,111,97,114,100,69,118,101,110,116,32,
 97,110,100,32,101,118,46,107,101,121,95,99,111,100,101,32,105,110,32,91,56,49,
 44,32,49,49,51,44,32,45,49,93,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def get_console_x_size_python(canvas: int):
+100,101,102,32,103,101,116,95,99,111,110,115,111,108,101,95,120,95,115,105,122,
+101,95,112,121,116,104,111,110,40,99,97,110,118,97,115,58,32,105,110,116,41,
+58,10,
+//     return obj_dict[canvas].width
+32,32,32,32,114,101,116,117,114,110,32,111,98,106,95,100,105,99,116,91,99,97,
+110,118,97,115,93,46,119,105,100,116,104,10,
+//
+10,
+//
+10,
+// @ffi.def_extern()
+64,102,102,105,46,100,101,102,95,101,120,116,101,114,110,40,41,10,
+// def get_console_y_size_python(canvas: int):
+100,101,102,32,103,101,116,95,99,111,110,115,111,108,101,95,121,95,115,105,122,
+101,95,112,121,116,104,111,110,40,99,97,110,118,97,115,58,32,105,110,116,41,
+58,10,
+//     return int(obj_dict[canvas].height / 0.5723297)
+32,32,32,32,114,101,116,117,114,110,32,105,110,116,40,111,98,106,95,100,105,
+99,116,91,99,97,110,118,97,115,93,46,104,101,105,103,104,116,32,47,32,48,46,
+53,55,50,51,50,57,55,41,10,
+//
+10,
+//
+10,
+// # print(screen.height, screen.width)
+35,32,112,114,105,110,116,40,115,99,114,101,101,110,46,104,101,105,103,104,116,
+44,32,115,99,114,101,101,110,46,119,105,100,116,104,41,10,
 0 };
 #ifdef PYPY_VERSION
 # define _CFFI_PYTHON_STARTUP_FUNC  _cffi_pypyinit_python_graphics
@@ -1773,6 +1807,30 @@ CFFI_DLLEXPORT void exit_console_python(int a0)
   _cffi_call_python(&_cffi_externpy__exit_console_python, p);
 }
 
+static struct _cffi_externpy_s _cffi_externpy__get_console_x_size_python =
+  { "python_graphics.get_console_x_size_python", (int)sizeof(int), 0, 0 };
+
+CFFI_DLLEXPORT int get_console_x_size_python(int a0)
+{
+  char a[8];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  _cffi_call_python(&_cffi_externpy__get_console_x_size_python, p);
+  return *(int *)p;
+}
+
+static struct _cffi_externpy_s _cffi_externpy__get_console_y_size_python =
+  { "python_graphics.get_console_y_size_python", (int)sizeof(int), 0, 0 };
+
+CFFI_DLLEXPORT int get_console_y_size_python(int a0)
+{
+  char a[8];
+  char *p = a;
+  *(int *)(p + 0) = a0;
+  _cffi_call_python(&_cffi_externpy__get_console_y_size_python, p);
+  return *(int *)p;
+}
+
 static struct _cffi_externpy_s _cffi_externpy__my_python_print =
   { "python_graphics.my_python_print", (int)sizeof(int), 0, 0 };
 
@@ -1815,6 +1873,8 @@ static const struct _cffi_global_s _cffi_globals[] = {
   { "draw_line_python", (void *)&_cffi_externpy__draw_line_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 38), (void *)draw_line_python },
   { "draw_point_python", (void *)&_cffi_externpy__draw_point_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 39), (void *)draw_point_python },
   { "exit_console_python", (void *)&_cffi_externpy__exit_console_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 37), (void *)exit_console_python },
+  { "get_console_x_size_python", (void *)&_cffi_externpy__get_console_x_size_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 34), (void *)get_console_x_size_python },
+  { "get_console_y_size_python", (void *)&_cffi_externpy__get_console_y_size_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 34), (void *)get_console_y_size_python },
   { "my_python_print", (void *)&_cffi_externpy__my_python_print, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 36), (void *)my_python_print },
   { "print_class", (void *)&_cffi_externpy__print_class, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 34), (void *)print_class },
   { "refresh_python", (void *)&_cffi_externpy__refresh_python, _CFFI_OP(_CFFI_OP_EXTERN_PYTHON, 37), (void *)refresh_python },
@@ -1827,7 +1887,7 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   NULL,  /* no struct_unions */
   NULL,  /* no enums */
   NULL,  /* no typenames */
-  10,  /* num_globals */
+  12,  /* num_globals */
   0,  /* num_struct_unions */
   0,  /* num_enums */
   0,  /* num_typenames */
