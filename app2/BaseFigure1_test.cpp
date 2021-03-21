@@ -162,10 +162,10 @@ class BaseFigure{
 
     private:
         int canvas;
-        float speed_x = 0.015 * 3;
-        float speed_y = 0.005 * 3;
+        float speed_x = 0.015 * 5;
+        float speed_y = 0.015 * 5;
 
-        float speed_rotation = 0.01 * 0;
+        float speed_rotation = 0.01 * 1;
 
     public:
         list<shared_ptr<BaseFigure>> complex_figure = {};
@@ -297,24 +297,33 @@ class BaseFigure{
 
         pair<float, float> rotation_figure(){
             auto [center_x, center_y] = get_center_point();
-            rotation_figure(center_x, center_y);
+            rotation_figure(center_x, center_y, center_x, center_y);
             return {center_x, center_y};
         }
+
         pair<float, float> rotation_figure(float center_x, float center_y){
+            rotation_figure(center_x, center_y, center_x, center_y);
+            return {center_x, center_y};
+        }
+        pair<float, float> rotation_figure(float center_x, float center_y, float rotation_point_x, float rotation_point_y){
             if (complex_figure.size() > 1){
                 for (auto figure: complex_figure){
-                    figure->rotation_figure(center_x, center_y);
+                    figure->rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
                 }
             } else {
                 for (auto point: points_with_line){
-                    auto [r, angle] = point->get_polar_coord(center_x, center_y);
+                    if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+                    auto [r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
                     angle += speed_rotation;
-                    point->set_polar_coord(r, angle, center_x, center_y);
+                    point->set_polar_coord(r, angle, rotation_point_x, rotation_point_y);
+                    if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
                 }
                 for (auto point: points_no_line){
-                    auto [r, angle] = point->get_polar_coord(center_x, center_y);
+                    if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+                    auto [r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
                     angle += speed_rotation;
                     point->set_polar_coord(r, angle, center_x, center_y);
+                    if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
                 }
             }
             return {center_x, center_y};
@@ -379,7 +388,9 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
             return data;
         }
 
-        void border_regulate(int x_size, int y_size, float center_x, float center_y){
+
+
+        tuple<float, float, float, float> border_regulate(int x_size, int y_size, float center_x, float center_y){
             auto [max_x, max_y, min_x, min_y] = get_extreme_points();
             if (x_size <= max_x->get_raw_x() && speed_x > 0) speed_x *= -1;
             if (y_size <= max_y->get_raw_y() && speed_y > 0) speed_y *= -1;
@@ -388,27 +399,51 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
 
             auto [max_x_r, max_x_angle] = max_x->get_polar_coord(center_x, center_y);
             auto [dx, useless_dy] = max_x->get_change_polar_coord(max_x_r, max_x_angle + speed_rotation, center_x, center_y);
-            auto [max_y_r, max_y_angle] = max_x->get_polar_coord(center_x, center_y);
-            auto [useless_dx, dy] = max_x->get_change_polar_coord(max_y_r, max_y_angle + speed_rotation, center_x, center_y);
+            auto [max_y_r, max_y_angle] = max_y->get_polar_coord(center_x, center_y);
+            auto [useless_dx, dy] = max_y->get_change_polar_coord(max_y_r, max_y_angle + speed_rotation, center_x, center_y);
 
-            auto [mim_x_r, min_x_angle] = max_x->get_polar_coord(center_x, center_y);
-            auto [min_dx, useless_dy1] = max_x->get_change_polar_coord(mim_x_r, min_x_angle + speed_rotation, center_x, center_y);
-            auto [min_y_r, min_y_angle] = max_x->get_polar_coord(center_x, center_y);
-            auto [useless_dx1, min_dy] = max_x->get_change_polar_coord(min_y_r, min_y_angle + speed_rotation, center_x, center_y);
+            auto [mim_x_r, min_x_angle] = min_x->get_polar_coord(center_x, center_y);
+            auto [min_dx, useless_dy1] = min_x->get_change_polar_coord(mim_x_r, min_x_angle + speed_rotation, center_x, center_y);
+            auto [min_y_r, min_y_angle] = min_y->get_polar_coord(center_x, center_y);
+            auto [useless_dx1, min_dy] = min_y->get_change_polar_coord(min_y_r, min_y_angle + speed_rotation, center_x, center_y);
 
-            if (x_size <= max_x->get_raw_x() && dx > 0) speed_rotation *= -1;
-            else if (y_size <= max_y->get_raw_y() && dy > 0) speed_rotation *= -1;
-            else if (0 >= min_x->get_raw_x() && min_dx < 0) speed_rotation *= -1;
-            else if (0 >= min_y->get_raw_y() && min_dy < 0) speed_rotation *= -1;
+            auto rotation_point_x = center_x;
+            auto rotation_point_y = center_y;
+            if (x_size <= max_x->get_raw_x() && dx > 0){
+//                speed_rotation *= -1;
+                rotation_point_x = max_x->get_raw_x();
+                rotation_point_y = max_x->get_raw_y();
+            }
+            else if (y_size <= max_y->get_raw_y() && dy > 0){
+//                speed_rotation *= -1;
+                rotation_point_x = max_y->get_raw_x();
+                rotation_point_y = max_y->get_raw_y();
+            }
+            else if (0 >= min_x->get_raw_x() && min_dx < 0){
+//                speed_rotation *= -1;
+                rotation_point_x = min_x->get_raw_x();
+                rotation_point_y = min_x->get_raw_y();
+            }
+            else if (0 >= min_y->get_raw_y() && min_dy < 0){
+//                speed_rotation *= -1;
+                rotation_point_x = min_y->get_raw_x();
+                rotation_point_y = min_y->get_raw_y();
+            }
+            return {center_x, center_y, rotation_point_x, rotation_point_y};
 
+        }
+        tuple<float, float, float, float> border_regulate(int x_size, int y_size){
+            auto [center_x, center_y] = get_center_point();
+            return border_regulate(x_size, y_size, center_x, center_y);
         }
 
 
 
         void renderer(int x_size, int y_size){
             move_figure(speed_x, speed_y);
-            auto [center_x, center_y] = rotation_figure();
-            border_regulate(x_size, y_size, center_x, center_y);
+            auto [center_x, center_y, rotation_point_x, rotation_point_y] = border_regulate(x_size, y_size);
+            rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
+
 
 //            border_control(max_x, max_y);
             draw();
