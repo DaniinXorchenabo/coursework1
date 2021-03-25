@@ -1,31 +1,3 @@
-""""Этот """
-
-
-from python_graphics import ffi, lib
-
-import sys
-import os
-
-
-sys.path.insert(0, r"C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38\lib\site-packages")
-# sys.path = [i for i in sys.path if 'anaconda' not in i]
-
-os.environ['PYTHONHOME'] = r'C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38'
-os.environ['PYTHONPATH'] = r'C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38'
-
-# sys.path.append(r"C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38\lib\site-packages\PIL")
-
-from itertools import cycle
-from time import sleep
-import copy
-import sys
-from random import randint, random
-
-from asciimatics.effects import Print
-from asciimatics.exceptions import ResizeScreenError, StopApplication
-from asciimatics.scene import Scene
-from asciimatics import event
-
 from itertools import cycle
 from time import sleep
 import copy
@@ -116,9 +88,9 @@ class MyNiceLire(DynamicRenderer):
 
     _CHARS = " ...::$$$&&&@@"
     _line_chars = " ''^.|/7.\\|Ywbd#"
-    _uni_line_chars = "''^.|/7.\\|Ywbd#" #
+    _uni_line_chars = " ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█"
 
-    def __init__(self, height, width, emitter, intensity, spot, colours,
+    def __init__(self, height, width, colours,
                  bg=False, unicode_aware=False):
         """
         :param height: Height of the box to contain the flames.
@@ -133,16 +105,16 @@ class MyNiceLire(DynamicRenderer):
         """
         super(MyNiceLire, self).__init__(height, width)
         self._unicode_aware = unicode_aware
-        self._emitter = emitter
-        self._intensity = intensity
-        self._spot_heat = spot
-        self._count = len([c for c in emitter if c not in " \n"])
+        # self._emitter = emitter
+        # self._intensity = intensity
+        # self._spot_heat = spot
+        # self._count = len([c for c in emitter if c not in " \n"])
         line = [0 for _ in range(self._width)]
         char_line = ["" for _ in range(self._width)]
         self._buffer = [copy.deepcopy(line) for _ in range(self._width * 2)]
         self._char_buffer = [copy.deepcopy(char_line) for _ in range(self._width * 2)]
-
-        self._colours = self._COLOURS_256 if colours >= 256 else self._COLOURS_16
+        self._colours = self._COLOURS_256 if colours >= 256 else \
+            self._COLOURS_16
         self._colors_console_count = colours
         self._bg_too = bg
 
@@ -262,15 +234,13 @@ class MyNiceLire(DynamicRenderer):
                         ix += sx
                         err += 2 * dy
                     iy += sy
-                    try:
-                        if char is None:
-                            self._buffer[py // 2][px // 2] = next(color_iterator)
-                            self._char_buffer[py // 2][px // 2] = self.line_chars[next_char]
-                        else:
-                            self._char_buffer[py // 2][px // 2] = char
-                            self._buffer[py // 2][px // 2] = next(color_iterator)
-                    except IndexError:
-                        pass
+
+                    if char is None:
+                        self._buffer[py // 2][px // 2] = next(color_iterator)
+                        self._char_buffer[py // 2][px // 2] = self.line_chars[next_char]
+                    else:
+                        self._char_buffer[py // 2][px // 2] = char
+                        self._buffer[py // 2][px // 2] = next(color_iterator)
 
             if dy == 0 and thin and char is None:
                 # Fast-path for polygon filling
@@ -299,164 +269,3 @@ class MyNiceLire(DynamicRenderer):
                     self._write(char, x, y, colour[0], colour[1], bg)
         return self._plain_image, self._colour_map
 
-
-obj_dict = {}
-counter = 0
-
-
-@ffi.def_extern()
-def compute(first: float, second: float) -> float:
-    return abs(first - second)
-
-
-@ffi.def_extern()
-def create_obj(data: int) -> int:
-    global counter, obj_dict
-    counter += 1
-    # obj_dict[counter] = ConsoleClass(data)
-    return counter
-
-
-@ffi.def_extern()
-def print_class(number: int) -> int:
-    global obj_dict
-    obj_dict[number].print_cl()
-    return 0
-
-
-@ffi.def_extern()
-def my_python_print() -> int:
-    # from __future__ import division
-    from asciimatics.effects import Cycle, Stars
-    from asciimatics.renderers import FigletText
-    from asciimatics.scene import Scene
-    from asciimatics.screen import Screen
-
-    def demo(screen):
-        effects = [
-            Cycle(
-                screen,
-                FigletText("ASCIIMATICS", font='big'),
-                screen.height // 2 - 8),
-            Cycle(
-                screen,
-                FigletText("ROCKS!", font='big'),
-                screen.height // 2 + 3),
-            Stars(screen, (screen.width + screen.height) // 2)
-        ]
-        screen.play([Scene(effects, 500)])
-
-    Screen.wrapper(demo)
-    # import math
-    # print(math.sin(5))
-    # import sys
-    #
-    # print(sys.executable)
-    return 7
-
-
-@ffi.def_extern()
-def draw_point_python(canvas: int, x: float, y: float):
-    print(f'рисую на канвасе {canvas} точку (x = {int(x)}, y = {int(y)})')
-
-
-@ffi.def_extern()
-def draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
-    y2 = y2 * 0.5723297
-    y1 = y1 * 0.5723297
-    obj_dict[canvas].move(x1, y1)
-    obj_dict[canvas].draw(x2, y2)
-    # print(round(x1), round(y1), round(x2), round(y2))
-
-
-@ffi.def_extern()
-def create_canvas(h=None, weight=None) -> int:
-    screen = Screen.open(None,
-                         catch_interrupt=False,
-                         unicode_aware=None)
-
-    print(screen.height, screen.width)
-    global obj_dict, counter
-    counter += 1
-    obj_dict[counter] = screen
-
-    return counter
-
-
-@ffi.def_extern()
-def refresh_python(canvas: int):
-    obj_dict[canvas].refresh()
-    obj_dict[canvas].clear_buffer(Screen.COLOUR_WHITE, 0, Screen.COLOUR_BLACK)
-
-
-@ffi.def_extern()
-def exit_console_python(canvas: int):
-    obj_dict[canvas].close()
-    print(all_lines)
-
-
-@ffi.def_extern()
-def check_exit_button_python(canvas: int) -> bool:
-    ev = obj_dict[canvas].get_event()
-    return type(ev) == event.KeyboardEvent and ev.key_code in [81, 113, -1]
-
-
-@ffi.def_extern()
-def get_console_x_size_python(canvas: int):
-    return obj_dict[canvas].width
-
-
-@ffi.def_extern()
-def get_console_y_size_python(canvas: int):
-    return int(obj_dict[canvas].height / 0.5723297)
-
-
-@ffi.def_extern()
-def new_start_python(canvas_id: int = None):
-    global obj_dict, counter
-
-    try:
-        screen = Screen.open(None,
-                             catch_interrupt=False,
-                             unicode_aware=None)
-        counter += 1
-        obj_dict[canvas_id or counter] = screen
-
-        scenes = []
-
-        effects = [
-            Print(screen,
-                  MyNiceLire(screen.height, screen.width,  "*" * 70, 0.8, 60, screen.colours,  bg=screen.colours >= 256),
-                  0,
-                  speed=1,
-                  transparent=False),
-        ]
-        scenes.append(Scene(effects, 100))
-        screen.start_play(scenes, stop_on_resize=True)
-        # screen.no_while_play(stop_on_resize=True)
-
-    except StopApplication:
-        return canvas_id or counter
-    return canvas_id or counter
-
-
-@ffi.def_extern()
-def new_renderer_python(canvas_id: int):
-    global all_lines
-    try:
-        obj_dict[canvas_id].no_while_play(stop_on_resize=True)
-        all_lines = []
-    except ResizeScreenError:
-        new_start_python(canvas_id)
-        obj_dict[canvas_id].no_while_play(stop_on_resize=True)
-
-
-@ffi.def_extern()
-def new_draw_line_python(canvas: int, x1: float, y1: float, x2: float, y2: float):
-    global all_lines
-    all_lines.append((x1, y1 * 0.5723297, x2, y2 * 0.5723297))
-
-        # y2 = y2 * 0.5723297
-        # y1 = y1 * 0.5723297
-        # obj_dict[canvas].move(x1, y1)
-        # obj_dict[canvas].draw(x2, y2)

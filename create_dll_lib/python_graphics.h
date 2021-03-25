@@ -22,3 +22,7 @@ bool check_exit_button_python(int);
 
 int get_console_x_size_python(int);
 int get_console_y_size_python(int);
+
+int new_start_python();
+void new_renderer_python(int);
+void new_draw_line_python(int, float, float, float, float);
