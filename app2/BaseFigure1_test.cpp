@@ -34,6 +34,14 @@ typedef bool (*BoolReturnFunc1int)(int);
    VoidReturnFunc1int exit_console_python = (VoidReturnFunc1int) GetProcAddress(a, "exit_console_python");
    BoolReturnFunc1int check_exit_button_python = (BoolReturnFunc1int)  GetProcAddress(a, "check_exit_button_python");
 
+   intReturnFunc new_start_python =  (intReturnFunc)  GetProcAddress(a, "new_start_python");
+   VoidReturnFunc1int new_renderer_python =  (VoidReturnFunc1int)  GetProcAddress(a, "new_renderer_python");
+   VoidReturnFunc1int4float new_draw_line_python =  (VoidReturnFunc1int4float)  GetProcAddress(a, "new_draw_line_python");
+
+//   int new_start_python();
+//void new_renderer_python(int);
+//void new_draw_line_python(int, float, float, float, float);
+
 using namespace std;
 
 
@@ -153,7 +161,8 @@ class Point{
 //            cout<<", ";
 //            cout<<y;
 //            cout<<"\n";
-            draw_line_python(canvas, x, y, point.get_raw_x(), point.get_raw_y());
+            new_draw_line_python(canvas, x, y, point.get_raw_x(), point.get_raw_y());
+//            draw_line_python(canvas, x, y, point.get_raw_x(), point.get_raw_y());
         }
 
 };
@@ -525,17 +534,21 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
 
 int main(){
 
+//int new_start_python();
+//void new_renderer_python(int);
+//void new_draw_line_python(int, float, float, float, float);
 
-   int canvas = create_canvas(0, 0);
+
+   int canvas = new_start_python();  // create_canvas(0, 0);
    int x = get_console_x_size_python(canvas);
    int y = get_console_y_size_python(canvas);
 //   print_class(my_obj);
-    BaseFigure one(canvas, { Point(canvas,10,10), Point(canvas,10,40),Point(canvas, 40,40),Point(canvas,40,10) });
+    BaseFigure one(canvas, { Point(canvas,5,5), Point(canvas,5,40),Point(canvas, 40,40),Point(canvas,40,5) });
 //    BaseFigure line(canvas, { Point(canvas,x - 1,0), Point(canvas,x - 1,y - 1)});
 //    BaseFigure line2(canvas, { Point(canvas,0,y - 1), Point(canvas,x - 1,y - 1)});
 //    BaseFigure line2(canvas, { Point(canvas,10,10), Point(canvas,10,50)});
 //    BaseFigure one_1(canvas, { Point(canvas,50,20), Point(canvas,50,50),Point(canvas,75,70),Point(canvas,100,50),Point(canvas,100,20) });
-    BaseFigure one_3(canvas, { Point(canvas,100,10), Point(canvas,130,60),Point(canvas,150,20)});
+    BaseFigure one_3(canvas, { Point(canvas,50,10), Point(canvas,70,30),Point(canvas,90,10)});
 
 //    BaseFigure one_4 = one + one_1 + one_3;
 //    one_4.draw();
@@ -554,7 +567,8 @@ int main(){
 //        line2.renderer();
 //        one_1.renderer();
 //        one_3.renderer();
-        refresh_python(canvas);
+
+        new_renderer_python(canvas);  // refresh_python(canvas);
         if (check_exit_button_python(canvas)){
             exit_console_python(canvas);
             break;
@@ -567,3 +581,5 @@ int main(){
 //    getch();
     return 0;
 }
+
+// g++ BaseFigure1_test.cpp -o main.exe -std=c++17
