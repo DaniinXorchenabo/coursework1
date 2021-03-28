@@ -4,6 +4,7 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <chrono>
 #include <cmath>
 //#include "python_graphics.h"
 
@@ -44,7 +45,11 @@ typedef bool (*BoolReturnFunc1int)(int);
 
 using namespace std;
 
-
+uint64_t current_timestamp(){
+    return chrono::duration_cast<chrono::milliseconds>(
+        chrono::steady_clock::now().time_since_epoch()
+    ).count();
+}
 
 class Point{
 
@@ -577,6 +582,7 @@ int main(){
 //        cout<<"\n";
     }
     cout<<x<<y<<endl;
+    cout<<current_timestamp()<<"\n";
 
 //    getch();
     return 0;
