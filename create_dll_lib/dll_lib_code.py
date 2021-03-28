@@ -431,7 +431,7 @@ def new_start_python(canvas_id: int = None):
                   speed=1,
                   transparent=False),
         ]
-        scenes.append(Scene(effects, 100))
+        scenes.append(Scene(effects, -1))
         screen.start_play(scenes, stop_on_resize=True)
         # screen.no_while_play(stop_on_resize=True)
 
