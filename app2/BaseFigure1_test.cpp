@@ -46,6 +46,7 @@ typedef bool (*BoolReturnFunc1int)(int);
 using namespace std;
 
 uint64_t current_timestamp(){
+    // copy paste with https://habr.com/ru/post/537682/
     return chrono::duration_cast<chrono::milliseconds>(
         chrono::steady_clock::now().time_since_epoch()
     ).count();
@@ -176,10 +177,13 @@ class BaseFigure{
 
     private:
         int canvas;
-        float speed_x = 0.015 * 5;
-        float speed_y = 0.015 * 5;
+        float norm_speed_x = 2; // скорость передвижения в секунду
+        float norm_speed_y = 0.5;
+        float norm_speed_rotation = 0.1; // скорость поворота в секунду
 
-        float speed_rotation = 0.01 * 1;
+        float speed_x;
+        float speed_y;
+        float speed_rotation;
 
     public:
         list<shared_ptr<BaseFigure>> complex_figure = {};
@@ -406,10 +410,10 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
 
         tuple<float, float, float, float> border_regulate(int x_size, int y_size, float center_x, float center_y){
             auto [max_x, max_y, min_x, min_y] = get_extreme_points();
-            if (x_size <= max_x->get_raw_x() && speed_x > 0) speed_x *= -1;
-            if (y_size <= max_y->get_raw_y() && speed_y > 0) speed_y *= -1;
-            if (0 >= min_x->get_raw_x() && speed_x < 0) speed_x *= -1;
-            if (0 >= min_y->get_raw_y() && speed_y < 0) speed_y *= -1;
+            if (x_size <= max_x->get_raw_x() && norm_speed_x > 0) norm_speed_x *= -1;
+            if (y_size <= max_y->get_raw_y() && norm_speed_y > 0) norm_speed_y *= -1;
+            if (0 >= min_x->get_raw_x() && norm_speed_x < 0) norm_speed_x *= -1;
+            if (0 >= min_y->get_raw_y() && norm_speed_y < 0) norm_speed_y *= -1;
 
             auto [max_x_r, max_x_angle] = max_x->get_polar_coord(center_x, center_y);
             auto [dx, useless_dy] = max_x->get_change_polar_coord(max_x_r, max_x_angle + speed_rotation, center_x, center_y);
@@ -453,7 +457,12 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
 
 
 
-        void renderer(int x_size, int y_size){
+        void renderer(int difference_between_times, int x_size, int y_size){
+
+            speed_x = norm_speed_x * difference_between_times * 0.001;
+//            cout<<difference_between_times<<" "<<speed_x<<"\n";
+            speed_y = norm_speed_y * difference_between_times * 0.001;
+            speed_rotation = norm_speed_rotation * difference_between_times * 0.001;
             move_figure(speed_x, speed_y);
             auto [center_x, center_y, rotation_point_x, rotation_point_y] = border_regulate(x_size, y_size);
             rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
@@ -543,12 +552,19 @@ int main(){
 //void new_renderer_python(int);
 //void new_draw_line_python(int, float, float, float, float);
 
-
+   const int delay = 50;  // плановый интервал между обновлениями
    int canvas = new_start_python();  // create_canvas(0, 0);
    int x = get_console_x_size_python(canvas);
    int y = get_console_y_size_python(canvas);
+   uint64_t current_time = current_timestamp();  // текущее время
+   uint64_t update_time = current_time + delay; // плановое время обновления
+   uint64_t last_time_update = current_time;  // прошлое время обновления
+   int difference_between_times; // действительная разница между временем обноаления и текущем временем
+
 //   print_class(my_obj);
     BaseFigure one(canvas, { Point(canvas,5,5), Point(canvas,5,40),Point(canvas, 40,40),Point(canvas,40,5) });
+    BaseFigure line(canvas, { Point(canvas,10,20), Point(canvas,50,10) });
+
 //    BaseFigure line(canvas, { Point(canvas,x - 1,0), Point(canvas,x - 1,y - 1)});
 //    BaseFigure line2(canvas, { Point(canvas,0,y - 1), Point(canvas,x - 1,y - 1)});
 //    BaseFigure line2(canvas, { Point(canvas,10,10), Point(canvas,10,50)});
@@ -563,26 +579,31 @@ int main(){
 //    one_1.draw();
 //
 //    one_3.draw();
-    int counter = 0;
+    int counter = 0, render_counter = 0;
     while (true){
-        one.renderer(x, y);
-//        line.renderer(x, y);
-//        line2.renderer(x, y);
-        one_3.renderer(x, y);
-//        line2.renderer();
-//        one_1.renderer();
-//        one_3.renderer();
+        current_time = current_timestamp();
+        if (update_time <= current_time){
+//            cout<<update_time - last_time_update<<" "<<difference_between_times<<"\n";
+            difference_between_times = current_time - last_time_update;
+            last_time_update = current_time; // update_time;
+            update_time = current_time + delay;
+            one.renderer(difference_between_times, x, y);
+            line.renderer(difference_between_times, x, y);
+            one_3.renderer(difference_between_times, x, y);
+            new_renderer_python(canvas);  // refresh_python(canvas);
 
-        new_renderer_python(canvas);  // refresh_python(canvas);
+            render_counter++;
+        }
         if (check_exit_button_python(canvas)){
             exit_console_python(canvas);
             break;
         }
 //        cout<<counter++;
 //        cout<<"\n";
+        counter++;
     }
-    cout<<x<<y<<endl;
-    cout<<current_timestamp()<<"\n";
+    cout<<x<<" "<<y<<"\n";
+    cout<<counter<<" "<<render_counter<<"\n";
 
 //    getch();
     return 0;
