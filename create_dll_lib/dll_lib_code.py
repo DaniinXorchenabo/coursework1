@@ -238,13 +238,14 @@ class MyNiceLire(DynamicRenderer):
                         iy += sy
                         err += 2 * dx
                     ix += sx
-
+                    py = py // 2 if py // 2 < self._height else self._height - 1
+                    px = px // 2 if px // 2 < self._width else self._width - 1
                     if char is None:
-                        self._char_buffer[py // 2][px // 2] = self.line_chars[next_char]
-                        self._buffer[py // 2][px // 2] = next(color_iterator)
+                        self._char_buffer[py][px] = self.line_chars[next_char]
+                        self._buffer[py][px] = next(color_iterator)
                     else:
-                        self._char_buffer[py // 2][px // 2] = char
-                        self._buffer[py // 2][px // 2] = next(color_iterator)
+                        self._char_buffer[py][px] = char
+                        self._buffer[py][px] = next(color_iterator)
 
             def _draw_on_y(ix, iy):
                 err = dy
