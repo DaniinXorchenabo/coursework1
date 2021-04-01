@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <chrono>
 #include <cmath>
+#include <random>
 //#include "python_graphics.h"
 
 typedef void (*VoidReturnFunc)();
@@ -44,6 +45,11 @@ typedef bool (*BoolReturnFunc1int)(int);
 //void new_draw_line_python(int, float, float, float, float);
 
 using namespace std;
+
+const float MAX_SPEED = 4;
+const float MAX_ROTATION_SPEED = 0.3;
+
+
 
 uint64_t current_timestamp(){
     // copy paste with https://habr.com/ru/post/537682/
@@ -185,6 +191,20 @@ class BaseFigure{
         float speed_y;
         float speed_rotation;
 
+        static float get_random_speed(){
+            static random_device rd;  // Источник зерна для рандома
+            static mt19937 gen(rd());  // Вихрь Мерсенна (Mersenne Twister)
+            static uniform_int_distribution<> get_speed(-MAX_SPEED * 100, MAX_SPEED * 100);
+            return (float)get_speed(gen) / 100;
+        }
+
+        static float get_random_rotation_speed(){
+            static random_device rd;  // Источник зерна для рандома
+            static mt19937 gen(rd());  // Вихрь Мерсенна (Mersenne Twister)
+            static uniform_int_distribution<> get_rotation_speed(-MAX_ROTATION_SPEED * 100, MAX_ROTATION_SPEED * 100);
+            return (float)get_rotation_speed(gen) / 100;
+        }
+
     public:
         list<shared_ptr<BaseFigure>> complex_figure = {};
         list<shared_ptr<Point>> points_with_line = {}; // точки, соеденнные линией
@@ -262,6 +282,9 @@ class BaseFigure{
             for (auto iter : points){
                 points_with_line.push_back(make_shared<Point>(iter));
             }
+            norm_speed_x = BaseFigure::get_random_speed();
+            norm_speed_y = BaseFigure::get_random_speed();
+            norm_speed_rotation = BaseFigure::get_random_rotation_speed();
         }
 
         BaseFigure(int my_canvas, int coordinates, ...){
@@ -269,6 +292,9 @@ class BaseFigure{
             for (auto coordinate = &coordinates; *coordinate; coordinate++){
                 points_with_line.push_back(make_shared<Point>(canvas, *coordinate, *(++coordinate)));
             }
+            norm_speed_x = BaseFigure::get_random_speed();
+            norm_speed_y = BaseFigure::get_random_speed();
+            norm_speed_rotation = BaseFigure::get_random_rotation_speed();
         }
 
         BaseFigure (const BaseFigure& figure_material){
@@ -276,6 +302,9 @@ class BaseFigure{
             points_no_line = figure_material.points_no_line;
             points_with_line = figure_material.points_with_line;
             complex_figure = figure_material.complex_figure;
+            norm_speed_x = figure_material.norm_speed_x;
+            norm_speed_y = figure_material.norm_speed_y;
+            norm_speed_rotation = figure_material.norm_speed_rotation;
         }
 
         void draw(){
@@ -323,7 +352,8 @@ class BaseFigure{
             rotation_figure(center_x, center_y, center_x, center_y);
             return {center_x, center_y};
         }
-        pair<float, float> rotation_figure(float center_x, float center_y, float rotation_point_x, float rotation_point_y){
+        pair<float, float> rotation_figure(float center_x, float center_y,
+                                           float rotation_point_x, float rotation_point_y){
             if (complex_figure.size() > 1){
                 for (auto figure: complex_figure){
                     figure->rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
@@ -347,37 +377,9 @@ class BaseFigure{
             return {center_x, center_y};
         }
 
-//        bool border_control(int max_x, int max_y){
-//            bool be_console = true;
-//            if (complex_figure.size() > 1){
-//                for (auto figure: complex_figure){
-//                    be_console = be_console && figure->border_control(max_x, max_y);
-//                    if (!be_console){
-//                        return be_console;
-//                    }
-//                }
-//            } else {
-//                for (auto point: points_no_line){
-//                    be_console = be_console && point->border_control(max_x, max_y);
-//                    if (!be_console){
-//                        return be_console;
-//                    }
-//
-//                }
-//                for (auto point: points_with_line){
-//                    be_console = be_console && point->border_control(max_x, max_y);
-//                    if (!be_console){
-//                        return be_console;
-//                    }
-//
-//                }
-//            }
-//        }
-//
-//        void correcting_
 
-//        tuple<Point, Point, Point, Point> get_extreme_points(){
-tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> get_extreme_points(){
+        tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>>
+            get_extreme_points(){
             auto max_x = make_shared<Point>(0, -1000, 0);
             auto max_y = make_shared<Point>(0, 0, -1000);
             auto min_x =  make_shared<Point>(0, 10000, 0);
@@ -386,9 +388,8 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
             return get_extreme_points({max_x, max_y, min_x, min_y});
         }
 
-//        tuple<Point, Point, Point, Point> get_extreme_points(Point max_x, Point max_y, Point min_x, Point min_y){
-//        tuple<Point, Point, Point, Point> get_extreme_points(tuple<Point, Point, Point, Point> data){
-    tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> get_extreme_points(tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> data){
+        tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>>
+            get_extreme_points(tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>> data){
             if (complex_figure.size() > 1){
                 for (auto figure: complex_figure){
                     data = figure->get_extreme_points(data);
@@ -548,10 +549,6 @@ tuple<shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>, shared_ptr<Point>
 
 int main(){
 
-//int new_start_python();
-//void new_renderer_python(int);
-//void new_draw_line_python(int, float, float, float, float);
-
    const int delay = 50;  // плановый интервал между обновлениями
    int canvas = new_start_python();  // create_canvas(0, 0);
    int x = get_console_x_size_python(canvas);
@@ -587,9 +584,11 @@ int main(){
             difference_between_times = current_time - last_time_update;
             last_time_update = current_time; // update_time;
             update_time = current_time + delay;
+
             one.renderer(difference_between_times, x, y);
             line.renderer(difference_between_times, x, y);
             one_3.renderer(difference_between_times, x, y);
+
             new_renderer_python(canvas);  // refresh_python(canvas);
 
             render_counter++;
@@ -604,6 +603,9 @@ int main(){
     }
     cout<<x<<" "<<y<<"\n";
     cout<<counter<<" "<<render_counter<<"\n";
+
+
+
 
 //    getch();
     return 0;
