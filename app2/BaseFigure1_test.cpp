@@ -18,6 +18,7 @@ typedef void (*VoidReturnFunc3int)(int, int, int);
 typedef void (*VoidReturnFunc5int)(int, int, int, int, int);
 typedef void (*VoidReturnFunc1int4float)(int, float, float, float, float);
 typedef bool (*BoolReturnFunc1int)(int);
+typedef float (*FloatReturnFunc1int)(int);
 
    HINSTANCE a = LoadLibrary("python_graphics.dll");
    VoidReturnFunc myFunc;
@@ -27,8 +28,16 @@ typedef bool (*BoolReturnFunc1int)(int);
 
    intReturnFunc1int init_console = (intReturnFunc1int) GetProcAddress(a, "create_obj");
    intReturnFunc1int print_class = (intReturnFunc1int) GetProcAddress(a, "print_class");
+
+   intReturnFunc1int get_event_type = (intReturnFunc1int) GetProcAddress(a, "get_event_type");
+   intReturnFunc1int get_event_code = (intReturnFunc1int) GetProcAddress(a, "get_event_code");
+
    intReturnFunc1int get_console_x_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_x_size_python");
    intReturnFunc1int get_console_y_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_y_size_python");
+
+   FloatReturnFunc1int my_get_mouse_x = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_x");
+   FloatReturnFunc1int my_get_mouse_y = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_y");
+
    intReturnFunc2int create_canvas = (intReturnFunc2int) GetProcAddress(a, "create_canvas");
    VoidReturnFunc3int draw_point_python = (VoidReturnFunc3int) GetProcAddress(a, "draw_point_python");
    VoidReturnFunc1int4float draw_line_python =  (VoidReturnFunc1int4float) GetProcAddress(a, "draw_line_python");
@@ -39,6 +48,7 @@ typedef bool (*BoolReturnFunc1int)(int);
    intReturnFunc new_start_python =  (intReturnFunc)  GetProcAddress(a, "new_start_python");
    VoidReturnFunc1int new_renderer_python =  (VoidReturnFunc1int)  GetProcAddress(a, "new_renderer_python");
    VoidReturnFunc1int4float new_draw_line_python =  (VoidReturnFunc1int4float)  GetProcAddress(a, "new_draw_line_python");
+
 
 //   int new_start_python();
 //void new_renderer_python(int);
@@ -57,6 +67,15 @@ uint64_t current_timestamp(){
         chrono::steady_clock::now().time_since_epoch()
     ).count();
 }
+
+pair<int, int> get_event(int canvas){
+    int ev = get_event_type(canvas);
+    if (ev != 0){
+        return {ev, get_event_code(canvas)};
+    }
+    return {0, 0};
+}
+
 
 class Point{
 
@@ -114,6 +133,10 @@ class Point{
         void move_point(float add_x, float add_y){
             x += add_x;
             y += add_y;
+        }
+        void set_coord(float new_x, float new_y){
+            x = new_x;
+            y = new_y;
         }
 
         Point(){
@@ -209,6 +232,9 @@ class BaseFigure{
         list<shared_ptr<BaseFigure>> complex_figure = {};
         list<shared_ptr<Point>> points_with_line = {}; // точки, соеденнные линией
         list<shared_ptr<Point>> points_no_line = {};  // точки, не соеденённые линией
+        static bool left_button_pressed; // Нажата левая клавиша мыши
+        bool user_move_not_me =  false;
+        bool user_move_me = false;
 
         bool is_complex_figure(){
             return complex_figure.empty() ;
@@ -313,6 +339,7 @@ class BaseFigure{
                     figure->draw();
                 }
             } else {
+                // TODO: сделать условие, что длинна должна быть больше 2-х
                 auto first_point = points_with_line.back();
                 for (auto second_point: points_with_line){
                     first_point->draw_line(*second_point);
@@ -456,20 +483,82 @@ class BaseFigure{
             return border_regulate(x_size, y_size, center_x, center_y);
         }
 
+//        bool is_2_lines(float x_1, float y_1, float x_2, float y_2, float x1, float y1, float x2, float y2){
+//            // Вернёт true если 2 отрезка пересекаются
+//            float pr1 = (x1 - x_1)*(y_2 - y_1) - (y1 - y_1)*(x_2 - x_1);
+//            float pr2 = (x2 - x_1)*(y_2 - y_1) - (y2 - y_1)*(x_2 - x_1);
+//            float pr3 = (x_1 - x1)*(y2 - y1) - (y_1 - y1)*(x2 - x1);
+//            float pr4 = (x_2 - x1)*(y2 - y1) - (y_2 - y1)*(x2 - x1);
+//            return pr1 * pr2 <= 0 && pr3 * pr4 <= 0;
+//        }
+//
+//        bool is_point_into_figure(Point point) {
+//            return is_point_into_figure(point.get_raw_x(), point.get_raw_y());
+//        }
+//        bool is_point_into_figure(shared_ptr<Point> point) {
+//            return is_point_into_figure(point->get_raw_x(), point->get_raw_y());
+//        }
+//        bool is_point_into_figure(float x, float y){
+//
+//            if (complex_figure.size() > 1){
+//                bool result = false;
+//                for (auto figure: complex_figure){
+//                    result = result || figure->is_point_into_figure(x, y);
+//                    if (result) return result;
+//                }
+//                return result;
+//            } else {
+//                int local_counter = 0;
+//                // TODO: сделать условие, что длинна должна быть больше 2-х
+//                auto first_point = points_with_line.back();
+//                for (auto second_point: points_with_line){
+//                     if (is_2_lines(x, y, -10, y, first_point->get_raw_x(), first_point->get_raw_y(),
+//                                                  second_point->get_raw_x(), second_point->get_raw_y())){
+//                        local_counter++;
+//                    }
+//                    first_point->draw_line(*second_point);
+//                    first_point = second_point;
+//                }
+//
+//                for (auto point: points_no_line){
+//                    if (point->get_x() == (int)x && point->get_y() == (int)y) return true;
+//                }
+//                return local_counter % 2 != 0;
+//            }
+//
+//        }
 
 
-        void renderer(int difference_between_times, int x_size, int y_size){
-
-            speed_x = norm_speed_x * difference_between_times * 0.001;
-//            cout<<difference_between_times<<" "<<speed_x<<"\n";
-            speed_y = norm_speed_y * difference_between_times * 0.001;
-            speed_rotation = norm_speed_rotation * difference_between_times * 0.001;
-            move_figure(speed_x, speed_y);
-            auto [center_x, center_y, rotation_point_x, rotation_point_y] = border_regulate(x_size, y_size);
-            rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
 
 
-//            border_control(max_x, max_y);
+
+        void renderer(int canvas, int difference_between_times, int x_size, int y_size){
+            if (BaseFigure::left_button_pressed && (!user_move_not_me || user_move_me)){
+//                if (!is_point_into_figure(my_get_mouse_x(canvas), my_get_mouse_y(canvas))) user_move_not_me = true;
+//                else user_move_me = true;
+//                static float last_position_x = my_get_mouse_x(canvas);
+//                static float last_position_y = my_get_mouse_y(canvas);
+//                static float new_position_x;
+//                static float new_position_y;
+//                new_position_x = my_get_mouse_x(canvas);
+//                new_position_y = my_get_mouse_y(canvas);
+//                move_figure(new_position_x - last_position_x, new_position_y - last_position_y);
+//                last_position_x = new_position_x;
+//                last_position_y = new_position_y;
+
+            } else {
+                if (user_move_not_me && !BaseFigure::left_button_pressed) {
+                    user_move_not_me = false;
+                    user_move_me = false;
+                }
+
+                speed_x = norm_speed_x * difference_between_times * 0.001;
+                speed_y = norm_speed_y * difference_between_times * 0.001;
+                speed_rotation = norm_speed_rotation * difference_between_times * 0.001;
+                move_figure(speed_x, speed_y);
+                auto [center_x, center_y, rotation_point_x, rotation_point_y] = border_regulate(x_size, y_size);
+                rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
+            }
             draw();
         }
 
@@ -545,6 +634,30 @@ class BaseFigure{
         }
 
 };
+bool BaseFigure::left_button_pressed = false;
+
+
+bool event_processing(int canvas){
+    static list<int> exit_list = {81, 113, -1};
+    auto [ev_type, ev_code] = get_event(canvas);
+    if (ev_type == 1){
+        // Событие клавиатуры
+        bool exit = false;
+        for (auto i: exit_list) exit |= i;
+        if (exit) {
+            exit_console_python(canvas);
+            return true;
+        }
+    } else if (ev_type == 2) {
+        // Событие мыши
+        if (ev_code == 1) { // Нажате левая клавиша мыши
+            BaseFigure::left_button_pressed = true;
+        } else {
+            BaseFigure::left_button_pressed = false;
+        }
+    }
+    return false;
+}
 
 
 int main(){
@@ -585,20 +698,23 @@ int main(){
             last_time_update = current_time; // update_time;
             update_time = current_time + delay;
 
-            one.renderer(difference_between_times, x, y);
-            line.renderer(difference_between_times, x, y);
-            one_3.renderer(difference_between_times, x, y);
+            one.renderer(canvas, difference_between_times, x, y);
+            line.renderer(canvas, difference_between_times, x, y);
+            one_3.renderer(canvas, difference_between_times, x, y);
 
+            if (BaseFigure::left_button_pressed){
+                new_draw_line_python(canvas, my_get_mouse_x(canvas)-1, my_get_mouse_y(canvas)-1,
+                                             my_get_mouse_x(canvas)+1, my_get_mouse_y(canvas)+1);
+                cout<<my_get_mouse_x(canvas)<<" "<<my_get_mouse_y(canvas)<<"\n";
+
+            }
             new_renderer_python(canvas);  // refresh_python(canvas);
 
             render_counter++;
         }
-        if (check_exit_button_python(canvas)){
-            exit_console_python(canvas);
+        if (event_processing(canvas)){
             break;
         }
-//        cout<<counter++;
-//        cout<<"\n";
         counter++;
     }
     cout<<x<<" "<<y<<"\n";
