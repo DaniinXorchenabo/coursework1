@@ -20,17 +20,21 @@ from time import sleep
 import copy
 import sys
 from random import randint, random
+import win32con
+import win32console
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics import event
+from asciimatics.event import KeyboardEvent, MouseEvent
 
 from itertools import cycle
 from time import sleep
 import copy
 import sys
 from random import randint, random
+from typing import Tuple
 
 from asciimatics.effects import Print
 from asciimatics.renderers import DynamicRenderer
@@ -60,8 +64,85 @@ def no_while_play(self, stop_on_resize=False, unhandled_input=None,
         return
 
 
+def my_get_event(self):
+    """
+    Check for any event without waiting.
+    """
+    # Look for a new event and consume it if there is one.
+    while len(self._stdin.PeekConsoleInput(1)) > 0:
+        event = self._stdin.ReadConsoleInput(1)[0]
+        if event.EventType == win32console.KEY_EVENT:
+            # Pasting unicode text appears to just generate key-up
+            # events (as if you had pressed the Alt keys plus the
+            # keypad code for the character), but the rest of the
+            # console input simply doesn't
+            # work with key up events - e.g. misses keyboard repeats.
+            #
+            # We therefore allow any key press (i.e. KeyDown) event and
+            # _any_ event that appears to have popped up from nowhere
+            # as long as the Alt key is present.
+            key_code = ord(event.Char)
+            if (event.KeyDown or
+                    (key_code > 0 and key_code not in self._keys and
+                     event.VirtualKeyCode == win32con.VK_MENU)):
+                # Record any keys that were pressed.
+                if event.KeyDown:
+                    self._keys.add(key_code)
+
+                # Translate keys into a KeyboardEvent object.
+                if event.VirtualKeyCode in self._KEY_MAP:
+                    key_code = self._KEY_MAP[event.VirtualKeyCode]
+
+                # Sadly, we are limited to Linux terminal input and so
+                # can't return modifier states in a cross-platform way.
+                # If the user decided not to be cross-platform, so be
+                # it, otherwise map some standard bindings for extended
+                # keys.
+                if (self._map_all and
+                        event.VirtualKeyCode in self._EXTRA_KEY_MAP):
+                    key_code = self._EXTRA_KEY_MAP[event.VirtualKeyCode]
+                else:
+                    if (event.VirtualKeyCode == win32con.VK_TAB and
+                            event.ControlKeyState &
+                            win32con.SHIFT_PRESSED):
+                        key_code = Screen.KEY_BACK_TAB
+
+                # Don't return anything if we didn't have a valid
+                # mapping.
+                if key_code:
+                    return KeyboardEvent(key_code)
+            else:
+                # Tidy up any key that was previously pressed.  At
+                # start-up, we may be mid-key, so can't assume this must
+                # always match up.
+                if key_code in self._keys:
+                    self._keys.remove(key_code)
+
+        elif event.EventType == win32console.MOUSE_EVENT:
+            # Translate into a MouseEvent object.
+            button = 0
+            if event.EventFlags == 0:
+                # Button pressed - translate it.
+                if (event.ButtonState & win32con.FROM_LEFT_1ST_BUTTON_PRESSED != 0):
+                    button |= MouseEvent.LEFT_CLICK
+                if (event.ButtonState & win32con.RIGHTMOST_BUTTON_PRESSED != 0):
+                    button |= MouseEvent.RIGHT_CLICK
+            elif event.EventFlags & win32con.DOUBLE_CLICK != 0:
+                button |= MouseEvent.DOUBLE_CLICK
+            button = (event.ButtonState if type(event.ButtonState) == int and button == 0 else button)
+            button = 0 if button not in [0, 1, 2, 4] else button
+            return MouseEvent(event.MousePosition.X,
+                              event.MousePosition.Y,
+                              button)
+
+    # If we get here, we've fully processed the event queue and found
+    # nothing interesting.
+    return None
+
+
 setattr(Screen, "start_play", start_play)
 setattr(Screen, "no_while_play", no_while_play)
+setattr(Screen, "my_get_event", my_get_event)
 
 all_lines = []  # (x0, y0, x1, y1)
 
@@ -302,7 +383,9 @@ class MyNiceLire(DynamicRenderer):
 
 
 obj_dict = {}
+mouse_position = {}
 counter = 0
+event_code_now = None
 
 
 @ffi.def_extern()
@@ -380,6 +463,7 @@ def create_canvas(h=None, weight=None) -> int:
     global obj_dict, counter
     counter += 1
     obj_dict[counter] = screen
+    mouse_position[counter] = [-1, -1]
 
     return counter
 
@@ -403,6 +487,44 @@ def check_exit_button_python(canvas: int) -> bool:
 
 
 @ffi.def_extern()
+def get_event_type(canvas: int) -> int:
+    global event_code_now, obj_dict, mouse_position
+
+    ev = obj_dict[canvas].my_get_event()
+    if type(ev) == event.KeyboardEvent:
+        event_code_now = ev.key_code
+        return 1
+    elif type(ev) == event.MouseEvent:
+        event_code_now = ev.buttons or 0
+        mouse_position[canvas][0] = ev.x
+        mouse_position[canvas][1] = ev.y
+
+        return 2
+    return 0
+
+
+@ffi.def_extern()
+def get_event_code(canvas: int) -> int:
+    global event_code_now
+    code = event_code_now
+    event_code_now = None
+    return code or -1000
+
+
+@ffi.def_extern()
+def get_mouse_x(canvas: int) -> float:
+    global mouse_position
+    print(mouse_position)
+    return float(mouse_position[canvas][0])
+
+
+@ffi.def_extern()
+def get_mouse_y(canvas: int) -> float:
+    global mouse_position
+    return float(mouse_position[canvas][1] / 0.5723297)
+
+
+@ffi.def_extern()
 def get_console_x_size_python(canvas: int):
     return obj_dict[canvas].width
 
@@ -414,14 +536,15 @@ def get_console_y_size_python(canvas: int):
 
 @ffi.def_extern()
 def new_start_python(canvas_id: int = None):
-    global obj_dict, counter
+    global obj_dict, counter, mouse_position
 
     try:
         screen = Screen.open(None,
                              catch_interrupt=False,
                              unicode_aware=None)
-        counter += 1
+        counter += 1 if canvas_id is None else 0
         obj_dict[canvas_id or counter] = screen
+        mouse_position[canvas_id or counter] = [-1, -1]
 
         scenes = []
 

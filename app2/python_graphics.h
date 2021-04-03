@@ -19,6 +19,10 @@ int create_canvas(int, int);
 void refresh_python(int);
 void exit_console_python(int);
 bool check_exit_button_python(int);
+int get_event_type(int);
+int get_event_code(int);
+float get_mouse_x(int);
+float get_mouse_y(int);
 
 int get_console_x_size_python(int);
 int get_console_y_size_python(int);
