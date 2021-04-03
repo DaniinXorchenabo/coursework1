@@ -235,6 +235,10 @@ class BaseFigure{
         static bool left_button_pressed; // Нажата левая клавиша мыши
         bool user_move_not_me =  false;
         bool user_move_me = false;
+        int user_move_me_status = 0; // 0 - клавиша не нажата, (или нажата, но проверка еще не проводилась)
+         // 1 - клавиша нажата, проверка проведена, перемещают не меня
+         // 2 - клавиша нажата, перемещают меня
+
 
         bool is_complex_figure(){
             return complex_figure.empty() ;
@@ -339,11 +343,12 @@ class BaseFigure{
                     figure->draw();
                 }
             } else {
-                // TODO: сделать условие, что длинна должна быть больше 2-х
-                auto first_point = points_with_line.back();
-                for (auto second_point: points_with_line){
-                    first_point->draw_line(*second_point);
-                    first_point = second_point;
+                if (points_with_line.size() > 1){
+                    auto first_point = points_with_line.back();
+                    for (auto second_point: points_with_line){
+                        first_point->draw_line(*second_point);
+                        first_point = second_point;
+                    }
                 }
                 for (auto point: points_no_line){
                     point->draw();
@@ -483,73 +488,65 @@ class BaseFigure{
             return border_regulate(x_size, y_size, center_x, center_y);
         }
 
-//        bool is_2_lines(float x_1, float y_1, float x_2, float y_2, float x1, float y1, float x2, float y2){
-//            // Вернёт true если 2 отрезка пересекаются
-//            float pr1 = (x1 - x_1)*(y_2 - y_1) - (y1 - y_1)*(x_2 - x_1);
-//            float pr2 = (x2 - x_1)*(y_2 - y_1) - (y2 - y_1)*(x_2 - x_1);
-//            float pr3 = (x_1 - x1)*(y2 - y1) - (y_1 - y1)*(x2 - x1);
-//            float pr4 = (x_2 - x1)*(y2 - y1) - (y_2 - y1)*(x2 - x1);
-//            return pr1 * pr2 <= 0 && pr3 * pr4 <= 0;
-//        }
-//
-//        bool is_point_into_figure(Point point) {
-//            return is_point_into_figure(point.get_raw_x(), point.get_raw_y());
-//        }
-//        bool is_point_into_figure(shared_ptr<Point> point) {
-//            return is_point_into_figure(point->get_raw_x(), point->get_raw_y());
-//        }
-//        bool is_point_into_figure(float x, float y){
-//
-//            if (complex_figure.size() > 1){
-//                bool result = false;
-//                for (auto figure: complex_figure){
-//                    result = result || figure->is_point_into_figure(x, y);
-//                    if (result) return result;
-//                }
-//                return result;
-//            } else {
-//                int local_counter = 0;
-//                // TODO: сделать условие, что длинна должна быть больше 2-х
-//                auto first_point = points_with_line.back();
-//                for (auto second_point: points_with_line){
-//                     if (is_2_lines(x, y, -10, y, first_point->get_raw_x(), first_point->get_raw_y(),
-//                                                  second_point->get_raw_x(), second_point->get_raw_y())){
-//                        local_counter++;
-//                    }
-//                    first_point->draw_line(*second_point);
-//                    first_point = second_point;
-//                }
-//
-//                for (auto point: points_no_line){
-//                    if (point->get_x() == (int)x && point->get_y() == (int)y) return true;
-//                }
-//                return local_counter % 2 != 0;
-//            }
-//
-//        }
+        bool is_2_lines(float x_1, float y_1, float x_2, float y_2, float x1, float y1, float x2, float y2){
+            // Вернёт true если 2 отрезка пересекаются
+            float pr1 = (x1 - x_1)*(y_2 - y_1) - (y1 - y_1)*(x_2 - x_1);
+            float pr2 = (x2 - x_1)*(y_2 - y_1) - (y2 - y_1)*(x_2 - x_1);
+            float pr3 = (x_1 - x1)*(y2 - y1) - (y_1 - y1)*(x2 - x1);
+            float pr4 = (x_2 - x1)*(y2 - y1) - (y_2 - y1)*(x2 - x1);
+            return pr1 * pr2 <= 0 && pr3 * pr4 <= 0;
+        }
 
+        bool is_point_into_figure(Point point) {
+            return is_point_into_figure(point.get_raw_x(), point.get_raw_y());
+        }
+        bool is_point_into_figure(shared_ptr<Point> point) {
+            return is_point_into_figure(point->get_raw_x(), point->get_raw_y());
+        }
+        bool is_point_into_figure(float x, float y){
 
-
-
-
-        void renderer(int canvas, int difference_between_times, int x_size, int y_size){
-            if (BaseFigure::left_button_pressed && (!user_move_not_me || user_move_me)){
-//                if (!is_point_into_figure(my_get_mouse_x(canvas), my_get_mouse_y(canvas))) user_move_not_me = true;
-//                else user_move_me = true;
-//                static float last_position_x = my_get_mouse_x(canvas);
-//                static float last_position_y = my_get_mouse_y(canvas);
-//                static float new_position_x;
-//                static float new_position_y;
-//                new_position_x = my_get_mouse_x(canvas);
-//                new_position_y = my_get_mouse_y(canvas);
-//                move_figure(new_position_x - last_position_x, new_position_y - last_position_y);
-//                last_position_x = new_position_x;
-//                last_position_y = new_position_y;
-
+            if (complex_figure.size() > 1){
+                bool result = false;
+                for (auto figure: complex_figure){
+                    result = result || figure->is_point_into_figure(x, y);
+                    if (result) return result;
+                }
+                return result;
             } else {
-                if (user_move_not_me && !BaseFigure::left_button_pressed) {
-                    user_move_not_me = false;
-                    user_move_me = false;
+                int local_counter = 0;
+                if (points_with_line.size() > 1){
+                    auto first_point = points_with_line.back();
+                    for (auto second_point: points_with_line){
+                         if (is_2_lines(x, y, -10, y, first_point->get_raw_x(), first_point->get_raw_y(),
+                                                      second_point->get_raw_x(), second_point->get_raw_y())){
+                            local_counter++;
+                        }
+                        first_point = second_point;
+                    }
+                }
+
+                for (auto point: points_no_line){
+                    if (point->get_x() == (int)x && point->get_y() == (int)y) return true;
+                }
+                return local_counter % 2 != 0;
+            }
+
+        }
+
+        void renderer(int canvas, int difference_between_times, int x_size, int y_size, float last_position_x, float last_position_y){
+            if (BaseFigure::left_button_pressed && (user_move_me_status == 0 || user_move_me_status == 2)){
+                if (user_move_me_status == 0) {
+                    if (is_point_into_figure(my_get_mouse_x(canvas), my_get_mouse_y(canvas))) user_move_me_status = 2;
+                    else user_move_me_status = 1;
+                }
+                if (user_move_me_status == 2){
+                float new_position_x = my_get_mouse_x(canvas);
+                float new_position_y = my_get_mouse_y(canvas);
+                move_figure(new_position_x - last_position_x, new_position_y - last_position_y);
+                }
+            } else {
+                if (user_move_me_status != 0 && !BaseFigure::left_button_pressed) {
+                    user_move_me_status = 0;
                 }
 
                 speed_x = norm_speed_x * difference_between_times * 0.001;
@@ -690,6 +687,8 @@ int main(){
 //
 //    one_3.draw();
     int counter = 0, render_counter = 0;
+    float last_position_x = my_get_mouse_x(canvas);
+    float last_position_y = my_get_mouse_y(canvas);
     while (true){
         current_time = current_timestamp();
         if (update_time <= current_time){
@@ -698,9 +697,9 @@ int main(){
             last_time_update = current_time; // update_time;
             update_time = current_time + delay;
 
-            one.renderer(canvas, difference_between_times, x, y);
-            line.renderer(canvas, difference_between_times, x, y);
-            one_3.renderer(canvas, difference_between_times, x, y);
+            one.renderer(canvas, difference_between_times, x, y, last_position_x, last_position_y);
+            line.renderer(canvas, difference_between_times, x, y, last_position_x, last_position_y);
+            one_3.renderer(canvas, difference_between_times, x, y, last_position_x, last_position_y);
 
             if (BaseFigure::left_button_pressed){
                 new_draw_line_python(canvas, my_get_mouse_x(canvas)-1, my_get_mouse_y(canvas)-1,
@@ -708,6 +707,8 @@ int main(){
                 cout<<my_get_mouse_x(canvas)<<" "<<my_get_mouse_y(canvas)<<"\n";
 
             }
+            last_position_x = my_get_mouse_x(canvas);
+            last_position_y = my_get_mouse_y(canvas);
             new_renderer_python(canvas);  // refresh_python(canvas);
 
             render_counter++;
