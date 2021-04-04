@@ -27,8 +27,8 @@ from os.path import join, split
 from shutil import copyfile
 
 
-lib_remove_path = join(split(split(__file__)[0])[0], 'app2')
-remove_files = ['python_graphics.h', 'python_graphics.dll']
+lib_remove_path = join(split(split(__file__)[0])[0], 'done')
+remove_files = ['python_graphics.dll']  # 'python_graphics.h',
 new_path_files = [join(lib_remove_path, i) for i in remove_files]
 remove_files = [join(split(__file__)[0], i) for i in remove_files]
 [copyfile(old, new) for old, new in zip(remove_files, new_path_files)]
