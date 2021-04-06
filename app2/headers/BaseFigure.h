@@ -86,6 +86,7 @@ class BaseFigure{
 
 
         list<shared_ptr<Point>> get_all_points_with_line();
+        list<shared_ptr<Point>> get_all_points();
         bool intersection_of_figures(shared_ptr<BaseFigure> figure); // true? если фигуры пересекаются
 
         void move_figure();
@@ -184,6 +185,7 @@ class BaseFigure{
                 auto a = other_figure->complex_figure;
                 complex_figure.merge(a);
             }
+            reboot_radius();
 //
             return *this;
         }
@@ -219,6 +221,8 @@ class BaseFigure{
         static list<shared_ptr<BaseFigure>> sum_figures(list<shared_ptr<BaseFigure>> all_figures){
             list<shared_ptr<BaseFigure>> :: iterator iter = all_figures.end();
             int size_list = all_figures.size();
+            bool rewrite_figures = false;
+
             for (int i = 1; (i < all_figures.size()); i++){ //  ||  (iter == all_figures.end() && i != 0)
                 cout<<i - 1<<" ";
                 advance(iter, -size_list + i - 1);
@@ -230,6 +234,7 @@ class BaseFigure{
                         test_figure->add_figure(*iter);
                         (*iter)->is_active = false;
                         (*iter)->set_speed(0,0,0);
+                        rewrite_figures = true;
 //                        size_list--;
 //                        iter = all_figures.end();
 //                        advance(iter, -size_list + i + j);
@@ -240,6 +245,15 @@ class BaseFigure{
                 }
                 cout<<") ";
 
+            }
+            if (rewrite_figures) {
+                list <shared_ptr<BaseFigure>> new_figures = {};
+                for (auto figure: all_figures) {
+                    if (figure->is_active) {
+                        new_figures.push_back(figure);
+                    }
+                }
+                return new_figures;
             }
             cout<<" ---\n";
             return all_figures;

@@ -92,13 +92,13 @@ pair<float, float> BaseFigure::get_center_point() {
         for (auto point: points_with_line) {
             x += point->get_raw_x();
             y += point->get_raw_y();
-            ++counter;
+            counter++;
         }
         if (counter == 0) {
             for (auto point: points_no_line) {
                 x += point->get_raw_x();
                 y += point->get_raw_y();
-                ++counter;
+                counter++;
             }
         }
     }
@@ -160,6 +160,25 @@ list <shared_ptr<Point>> BaseFigure::get_all_points_with_line() {
     return all_points;
 }
 
+list <shared_ptr<Point>> BaseFigure::get_all_points() {
+    list <shared_ptr<Point>> all_points = {};
+    if (complex_figure.size() > 1) {
+        for (auto figure: complex_figure) {
+            all_points.merge(figure->get_all_points());
+        }
+    } else {
+        for (auto point: points_with_line) {
+            all_points.push_back(point);
+        }
+
+        for (auto point: points_no_line) {
+            all_points.push_back(point);
+        }
+
+    }
+    return all_points;
+}
+
 
 // =======! Сеттеры !=======
 void BaseFigure::set_speed(float new_x, float new_y, float new_rotation) {
@@ -209,26 +228,37 @@ pair<float, float> BaseFigure::rotation_figure(float center_x, float center_y) {
 
 pair<float, float> BaseFigure::rotation_figure(float center_x, float center_y,
                                                float rotation_point_x, float rotation_point_y) {
-    if (complex_figure.size() > 1) {
-        for (auto figure: complex_figure) {
-            figure->rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
-        }
-    } else {
-        for (auto point: points_with_line) {
-            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
-            angle += speed_rotation;
-            point->set_polar_coord(r, angle, rotation_point_x, rotation_point_y);
-            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-        }
-        for (auto point: points_no_line) {
-            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
-            angle += speed_rotation;
-            point->set_polar_coord(r, angle, center_x, center_y);
-            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-        }
+//    if (complex_figure.size() > 1) {
+//        for (auto figure: complex_figure) {
+//            figure->rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
+//        }
+//    } else {
+//        for (auto point: points_with_line) {
+//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+//            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
+//            angle += speed_rotation;
+//            point->set_polar_coord(r, angle, rotation_point_x, rotation_point_y);
+//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+//        }
+//        for (auto point: points_no_line) {
+//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+//            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
+//            angle += speed_rotation;
+//            point->set_polar_coord(r, angle, center_x, center_y);
+//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+//        }
+//    }
+
+    auto all_points = get_all_points();
+    for (auto point: all_points) {
+        if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
+        auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
+        angle += speed_rotation;
+        point->set_polar_coord(r, angle, rotation_point_x, rotation_point_y);
+        if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
     }
+
+
     return {center_x, center_y};
 }
 
@@ -442,10 +472,11 @@ void BaseFigure::add_figure(shared_ptr <BaseFigure> other_figure) {
         auto a = other_figure->complex_figure;
         complex_figure.merge(a);
     }
-    norm_speed_rotation = 0;
-    other_figure->set_speed(0, 0, 0);
+//    norm_speed_rotation = 0;
+//    other_figure->set_speed(0, 0, 0);
     other_figure->is_active = false;
-    set_speed(0, 0, 0);
+//    set_speed(0, 0, 0);
+    reboot_radius();
     //    this->reboot_radius();
 }
 

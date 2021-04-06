@@ -23,7 +23,7 @@ bool ConsoleRenderer::renderer(int canvas) {
         mouse_pos_x = my_get_mouse_x(canvas);
         mouse_pos_y = my_get_mouse_y(canvas);
 
-//        rendering_figures = BaseFigure::sum_figures(rendering_figures);
+        rendering_figures = BaseFigure::sum_figures(rendering_figures);
 
         for (auto figure: rendering_figures) {
             figure->renderer(canvas, difference_between_times, weight, height,
