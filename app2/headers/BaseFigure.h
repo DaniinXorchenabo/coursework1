@@ -22,7 +22,7 @@ using namespace std;
 
 class BaseFigure{
 
-    private:
+    protected:
         int canvas;
         float norm_speed_x = 2; // скорость передвижения в секунду
         float norm_speed_y = 0.5;
@@ -52,8 +52,6 @@ class BaseFigure{
         list<shared_ptr<Point>> points_with_line = {}; // точки, соеденнные линией
         list<shared_ptr<Point>> points_no_line = {};  // точки, не соеденённые линией
         static bool left_button_pressed; // Нажата левая клавиша мыши
-        bool user_move_not_me =  false;
-        bool user_move_me = false;
         bool is_active = true;
         int user_move_me_status = 0;    // 0 - клавиша не нажата, (или нажата, но проверка еще не проводилась)
                                         // 1 - клавиша нажата, проверка проведена, перемещают не меня

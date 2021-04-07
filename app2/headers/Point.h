@@ -18,7 +18,7 @@ using namespace std;
 
 class Point{
 
-    private:
+    protected:
         float x, y, radius = -1;
         int canvas;
 
