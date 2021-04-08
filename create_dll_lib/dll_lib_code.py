@@ -5,7 +5,8 @@ from python_graphics import ffi, lib
 
 import sys
 import os
-
+from time import time
+import numpy as np
 
 sys.path.insert(0, r"C:\Users\Acer\AppData\Local\Programs\Python\python38_cv2\Python38\lib\site-packages")
 # sys.path = [i for i in sys.path if 'anaconda' not in i]
@@ -22,6 +23,7 @@ import sys
 from random import randint, random
 import win32con
 import win32console
+import array
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import ResizeScreenError, StopApplication
@@ -37,7 +39,7 @@ from random import randint, random
 from typing import Tuple
 
 from asciimatics.effects import Print
-from asciimatics.renderers import DynamicRenderer
+from asciimatics.renderers import DynamicRenderer, Fire
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.exceptions import ResizeScreenError, StopApplication
@@ -145,6 +147,7 @@ setattr(Screen, "no_while_play", no_while_play)
 setattr(Screen, "my_get_event", my_get_event)
 
 all_lines = []  # (x0, y0, x1, y1)
+timers = [0, 0, 0, 0, 0]
 
 
 class MyNiceLire(DynamicRenderer):
@@ -218,10 +221,21 @@ class MyNiceLire(DynamicRenderer):
         self._intensity = intensity
         self._spot_heat = spot
         self._count = len([c for c in emitter if c not in " \n"])
-        line = [0 for _ in range(self._width)]
-        char_line = ["" for _ in range(self._width)]
-        self._buffer = [copy.deepcopy(line) for _ in range(self._width * 2)]
-        self._char_buffer = [copy.deepcopy(char_line) for _ in range(self._width * 2)]
+        # line = [0 for _ in range(self._width)]
+        # char_line = ["" for _ in range(self._width)]
+
+        # self._buffer = np.zeros((self._width, self._width * 2), 'int')
+        # self._char_buffer = np.zeros((self._width, self._width * 2), 'str')
+        # self._last_buffer = np.zeros((self._width, self._width * 2), 'int')
+        # self._last_char_buffer = np.zeros((self._width, self._width * 2), 'str')
+
+        self._buffer = [[0] * self._width for i in range(self._width)]
+        self._char_buffer = [[""] * self._width for i in range(self._width)]
+        self._last_buffer = [[0] * self._width for i in range(self._width)]
+        self._last_char_buffer = [[""] * self._width for i in range(self._width)]
+
+
+        # self._buffer = [array.array('i', list([0] * self._width)]
 
         self._colours = self._COLOURS_256 if colours >= 256 else self._COLOURS_16
         self._colors_console_count = colours
@@ -258,10 +272,94 @@ class MyNiceLire(DynamicRenderer):
 
     def _render_now(self, char=None, thin=False):
 
-        color_iterator = cycle(range(16))
-        char_line = ["" for _ in range(self._width)]
-        self._char_buffer = [copy.deepcopy(char_line) for _ in range(self._width * 2)]
+        filter_func1 = lambda i: i[1] != i[3] or i[2] != i[4]
 
+        def _get_start_char(cx, cy):
+            needle = self.get_from(cx, cy)
+            if needle is not None and bool(needle):
+                letter = needle
+                if chr(letter) in self.line_chars:
+                    return self.line_chars.find(chr(letter))
+            return 0
+
+        def _fast_fill(start_x, end_x, iy):
+            next_char = -1
+
+            for ix in range(start_x, end_x):
+                if ix % 2 == 0 or next_char == -1:
+                    next_char = _get_start_char(ix // 2, iy // 2)
+                next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
+                if ix % 2 == 1:
+                    self._char_buffer[iy // 2][ix // 2] = self.line_chars[next_char]
+                    self._buffer[iy // 2][ix // 2] = next(color_iterator)
+            if end_x % 2 == 1:
+                self._char_buffer[iy // 2][end_x // 2] = self.line_chars[next_char]
+                self._buffer[iy // 2][end_x // 2] = next(color_iterator)
+
+        def _draw_on_x(ix, iy):
+            err = dx
+            px = ix - 2
+            py = iy - 2
+            next_char = 0
+            while ix != x1:
+                if ix < px or ix - px >= 2 or iy < py or iy - py >= 2:
+                    px = ix & ~1
+                    py = iy & ~1
+                    next_char = _get_start_char(px // 2, py // 2)
+                next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
+                err -= 2 * dy
+                if err < 0:
+                    iy += sy
+                    err += 2 * dx
+                ix += sx
+                py = py // 2 if py // 2 < self._height else self._height - 1
+                px = px // 2 if px // 2 < self._width else self._width - 1
+                if char is None:
+                    self._char_buffer[py][px] = self.line_chars[next_char]
+                    self._buffer[py][px] = next(color_iterator)
+                else:
+                    self._char_buffer[py][px] = char
+                    self._buffer[py][px] = next(color_iterator)
+
+        def _draw_on_y(ix, iy):
+            err = dy
+            px = ix - 2
+            py = iy - 2
+            next_char = 0
+            while iy != y1:
+                if ix < px or ix - px >= 2 or iy < py or iy - py >= 2:
+                    px = ix & ~1
+                    py = iy & ~1
+                    next_char = _get_start_char(px // 2, py // 2)
+                next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
+                err -= 2 * dx
+                if err < 0:
+                    ix += sx
+                    err += 2 * dy
+                iy += sy
+                try:
+                    if char is None:
+                        self._buffer[py // 2][px // 2] = next(color_iterator)
+                        self._char_buffer[py // 2][px // 2] = self.line_chars[next_char]
+                    else:
+                        self._char_buffer[py // 2][px // 2] = char
+                        self._buffer[py // 2][px // 2] = next(color_iterator)
+                except IndexError:
+                    pass
+
+        start_t1 = time()
+        # self._buffer = copy.deepcopy(self._clean_buffer)
+        # self._char_buffer = copy.deepcopy(self._clean_char_buffer)
+
+        # self._buffer = np.zeros((self._width, self._width * 2), 'int')
+        # self._char_buffer = np.zeros((self._width, self._width * 2), 'str')
+
+        self._buffer = [[0] * self._width for i in range(self._width)]
+        self._char_buffer = [[""] * self._width for i in range(self._width)]
+
+        color_iterator = cycle(range(16))
+        dt1 = time() - start_t1
+        start_t2 = time()
         for (x0, y0, x1, y1, *new_color_iter) in all_lines:
             x0, y0 = int(round(x0 * 2, 0)), int(round(y0 * 2, 0))
             x1, y1 = int(round(x1 * 2, 0)), int(round(y1 * 2, 0))
@@ -281,79 +379,6 @@ class MyNiceLire(DynamicRenderer):
             sx = -1 if x0 > x1 else 1
             sy = -1 if y0 > y1 else 1
 
-            def _get_start_char(cx, cy):
-                needle = self.get_from(cx, cy)
-                if needle is not None and bool(needle):
-                    letter = needle
-                    if chr(letter) in self.line_chars:
-                        return self.line_chars.find(chr(letter))
-                return 0
-
-            def _fast_fill(start_x, end_x, iy):
-                next_char = -1
-
-                for ix in range(start_x, end_x):
-                    if ix % 2 == 0 or next_char == -1:
-                        next_char = _get_start_char(ix // 2, iy // 2)
-                    next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
-                    if ix % 2 == 1:
-                        self._char_buffer[iy // 2][ix // 2] = self.line_chars[next_char]
-                        self._buffer[iy // 2][ix // 2] = next(color_iterator)
-                if end_x % 2 == 1:
-                    self._char_buffer[iy // 2][end_x // 2] = self.line_chars[next_char]
-                    self._buffer[iy // 2][end_x // 2] = next(color_iterator)
-
-            def _draw_on_x(ix, iy):
-                err = dx
-                px = ix - 2
-                py = iy - 2
-                next_char = 0
-                while ix != x1:
-                    if ix < px or ix - px >= 2 or iy < py or iy - py >= 2:
-                        px = ix & ~1
-                        py = iy & ~1
-                        next_char = _get_start_char(px // 2, py // 2)
-                    next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
-                    err -= 2 * dy
-                    if err < 0:
-                        iy += sy
-                        err += 2 * dx
-                    ix += sx
-                    py = py // 2 if py // 2 < self._height else self._height - 1
-                    px = px // 2 if px // 2 < self._width else self._width - 1
-                    if char is None:
-                        self._char_buffer[py][px] = self.line_chars[next_char]
-                        self._buffer[py][px] = next(color_iterator)
-                    else:
-                        self._char_buffer[py][px] = char
-                        self._buffer[py][px] = next(color_iterator)
-
-            def _draw_on_y(ix, iy):
-                err = dy
-                px = ix - 2
-                py = iy - 2
-                next_char = 0
-                while iy != y1:
-                    if ix < px or ix - px >= 2 or iy < py or iy - py >= 2:
-                        px = ix & ~1
-                        py = iy & ~1
-                        next_char = _get_start_char(px // 2, py // 2)
-                    next_char |= 2 ** abs(ix % 2) * 4 ** (iy % 2)
-                    err -= 2 * dx
-                    if err < 0:
-                        ix += sx
-                        err += 2 * dy
-                    iy += sy
-                    try:
-                        if char is None:
-                            self._buffer[py // 2][px // 2] = next(color_iterator)
-                            self._char_buffer[py // 2][px // 2] = self.line_chars[next_char]
-                        else:
-                            self._char_buffer[py // 2][px // 2] = char
-                            self._buffer[py // 2][px // 2] = next(color_iterator)
-                    except IndexError:
-                        pass
-
             if dy == 0 and thin and char is None:
                 # Fast-path for polygon filling
                 _fast_fill(min(x0, x1), max(x0, x1), y0)
@@ -366,20 +391,59 @@ class MyNiceLire(DynamicRenderer):
                 if not thin:
                     _draw_on_y(x0 + 1, y0)
 
-        self._clear()
-        for x in range(self._width):
-            for y in range(len(self._buffer)):
-                if self._buffer[y][x] > 0:
-                    colour = self._colours[min(len(self._colours) - 1,
-                                               self._buffer[y][x])]
-                    if self._bg_too:
-                        char = " "
-                        bg = colour[0]
-                    else:
-                        char = self._char_buffer[y][x]
-                        bg = 0
-                    self._write(char, x, y, colour[0], colour[1], bg)
+        dt2 = time() - start_t2
+        start_t3 = time()
+        dt_write = 0
+
+        for y, chars_string, colors_string, old_chars_string, old_colors_string in zip(
+                    range(len(self._buffer)),
+                    self._char_buffer,
+                    self._buffer,
+                    self._last_char_buffer,
+                    self._last_buffer
+                ):
+            for x, char, color, _, _ in filter(
+                    filter_func1, zip(
+                        range(self._width),
+                        chars_string,
+                        colors_string,
+                        old_chars_string,
+                        old_colors_string
+                    )):
+                colour = self._colours[min(len(self._colours) - 1, color)]
+                self._write(char, x, y, colour[0], colour[1], 0)
+
+
+        dt3 = time() - start_t3
+        start_t4 = time()
+        # self._last_buffer = np.zeros_like(self._last_buffer, 'int')
+        # self._last_char_buffer = np.zeros_like(self._char_buffer, "str")
+        self._last_buffer = [[j for j in i] for i in self._buffer]
+        self._last_char_buffer = [[j for j in i] for i in self._char_buffer]
+
+        dt4 = time() - start_t4
+        timers[0] += 1
+        timers[1] += dt1
+        timers[2] += dt2
+        timers[3] += dt3
+        timers[4] += dt4
+        # print(round(dt1, 4), round(dt2, 4), round(dt3, 4), round(dt4, 4))
         return self._plain_image, self._colour_map
+
+        # self._clear()
+        # for x in range(self._width):
+        #     for y in range(len(self._buffer)):
+        #         if self._buffer[y][x] > 0:
+        #             colour = self._colours[min(len(self._colours) - 1,
+        #                                        self._buffer[y][x])]
+        #             if self._bg_too:
+        #                 char = " "
+        #                 bg = colour[0]
+        #             else:
+        #                 char = self._char_buffer[y][x]
+        #                 bg = 0
+        #             self._write(char, x, y, colour[0], colour[1], bg)
+        # return self._plain_image, self._colour_map
 
 
 obj_dict = {}
@@ -478,6 +542,7 @@ def refresh_python(canvas: int):
 def exit_console_python(canvas: int):
     obj_dict[canvas].close()
     print(all_lines)
+    print("timers", *[round(i / timers[0], 4) for i in timers[1:]], round(sum(timers[1:]) / timers[0], 10000))
 
 
 @ffi.def_extern()
