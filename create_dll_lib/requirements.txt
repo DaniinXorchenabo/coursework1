@@ -1,0 +1,3 @@
+asciimatics
+cffi
+numpy

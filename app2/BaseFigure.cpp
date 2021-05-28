@@ -228,26 +228,6 @@ pair<float, float> BaseFigure::rotation_figure(float center_x, float center_y) {
 
 pair<float, float> BaseFigure::rotation_figure(float center_x, float center_y,
                                                float rotation_point_x, float rotation_point_y) {
-//    if (complex_figure.size() > 1) {
-//        for (auto figure: complex_figure) {
-//            figure->rotation_figure(center_x, center_y, rotation_point_x, rotation_point_y);
-//        }
-//    } else {
-//        for (auto point: points_with_line) {
-//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-//            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
-//            angle += speed_rotation;
-//            point->set_polar_coord(r, angle, rotation_point_x, rotation_point_y);
-//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-//        }
-//        for (auto point: points_no_line) {
-//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-//            auto[r, angle] = point->get_polar_coord(rotation_point_x, rotation_point_y);
-//            angle += speed_rotation;
-//            point->set_polar_coord(r, angle, center_x, center_y);
-//            if (rotation_point_x != center_x || rotation_point_y != center_y) point->reboot_radius();
-//        }
-//    }
 
     auto all_points = get_all_points();
     for (auto point: all_points) {
