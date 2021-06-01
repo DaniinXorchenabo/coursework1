@@ -1,5 +1,3 @@
-
-
 #include <list>
 #include <iterator>
 #include <memory>

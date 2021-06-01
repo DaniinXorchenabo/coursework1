@@ -16,34 +16,37 @@
 
 using namespace std;
 
-
-int main(){
+int main() {
 
     int canvas = new_start_python();
     ConsoleRenderer this_console(canvas);
-
+//    this_console += BaseFigure(canvas, {
+//        Point(canvas,5,5),
+//        Point(canvas,5,30),
+//        Point(canvas, 30,30),
+//        Point(canvas,30,5)
+//    });
+//    this_console += BaseFigure(canvas, {
+//        Point(canvas,65,10),
+//        Point(canvas,50,10)
+//    });
+//    this_console += BaseFigure(canvas, {
+//        Point(canvas,50,40),
+//        Point(canvas,70,50),
+//        Point(canvas,90,10)
+//    });
     this_console += BaseFigure(canvas, {
-        Point(canvas,5,5),
-        Point(canvas,5,30),
-        Point(canvas, 30,30),
-        Point(canvas,30,5)
+            Point(canvas, 10, 10),
+            Point(canvas, 30, 10),
+            Point(canvas, 30, 30)
     });
     this_console += BaseFigure(canvas, {
-        Point(canvas,65,10),
-        Point(canvas,50,10)
-    });
-    this_console += BaseFigure(canvas, {
-        Point(canvas,50,40),
-        Point(canvas,70,50),
-        Point(canvas,90,10)
+            Point(canvas, 50, 50),
+            Point(canvas, 80, 50),
+            Point(canvas, 80, 80)
     });
 
-
-
-    while (true){
-        if (this_console.renderer(canvas)) break;
-    }
-
+    while (true) { if (this_console.renderer(canvas)) break; }
     return 0;
 }
 
