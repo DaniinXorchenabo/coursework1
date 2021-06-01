@@ -15,7 +15,7 @@
 
 bool ConsoleRenderer::renderer(int canvas) {
     current_time = current_timestamp();
-    if (update_time <= current_time){
+    if (update_time <= current_time) {
 
         difference_between_times = current_time - last_time_update;
         last_time_update = current_time;
@@ -43,14 +43,15 @@ bool ConsoleRenderer::renderer(int canvas) {
         new_renderer_python(canvas);
 
     }
-    if (event_processing(canvas)){
+    if (event_processing(canvas)) {
         return true;
     }
     return false;
 }
 
-ConsoleRenderer::ConsoleRenderer(){}
-ConsoleRenderer::ConsoleRenderer(int canvas){
+ConsoleRenderer::ConsoleRenderer() {}
+
+ConsoleRenderer::ConsoleRenderer(int canvas) {
 
     weight = get_console_x_size_python(canvas);
     height = get_console_y_size_python(canvas);
@@ -61,7 +62,7 @@ ConsoleRenderer::ConsoleRenderer(int canvas){
 
 }
 
-ConsoleRenderer::ConsoleRenderer(int canvas, int set_delay){
+ConsoleRenderer::ConsoleRenderer(int canvas, int set_delay) {
 
     weight = get_console_x_size_python(canvas);
     height = get_console_y_size_python(canvas);
@@ -74,10 +75,10 @@ ConsoleRenderer::ConsoleRenderer(int canvas, int set_delay){
 
 }
 
-bool ConsoleRenderer::event_processing(int canvas){
+bool ConsoleRenderer::event_processing(int canvas) {
     static list<int> exit_list = {81, 113, -1};
-    auto [ev_type, ev_code] = get_event(canvas);
-    if (ev_type == 1){
+    auto[ev_type, ev_code] = get_event(canvas);
+    if (ev_type == 1) {
         // Событие клавиатуры
         bool exit = false;
         for (auto i: exit_list) exit |= i;
@@ -96,10 +97,10 @@ bool ConsoleRenderer::event_processing(int canvas){
     return false;
 }
 
-void ConsoleRenderer::add_figure(shared_ptr<BaseFigure> figure){
+void ConsoleRenderer::add_figure(shared_ptr <BaseFigure> figure) {
     rendering_figures.push_back(figure);
 }
 
-void ConsoleRenderer::add_figure(BaseFigure& figure){
+void ConsoleRenderer::add_figure(BaseFigure &figure) {
     rendering_figures.push_back(make_shared<BaseFigure>(figure));
 }
