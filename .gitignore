@@ -10,3 +10,4 @@
 /**/Release/**/*
 *.pyd
 /**/create_dll_lib/**/*.dll
+!/**/production/**/*
