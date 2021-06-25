@@ -1,3 +1,4 @@
+
 # Coursework 1
 
 Представляет из себя консольное приложение с псевдографикой (`ascii`-символы).
@@ -61,3 +62,10 @@ cd coursework1/create_dll_lib
 pip install -r requirements.txt
 python dll_generator.py
 ```
+
+## Пояснительная записка
+
+[Курсовой_проект_1.pdf](https://github.com/DaniinXorchenabo/coursework1/files/6717982/20.1_._._._1_.pdf)
+
+[Курсовой_проект_1.docx](https://github.com/DaniinXorchenabo/coursework1/files/6717986/20.1_._._._1_.docx)
+
