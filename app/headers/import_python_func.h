@@ -1,15 +1,14 @@
 #ifndef IMPORT_PYTHON_FUNC_H
 #define IMPORT_PYTHON_FUNC_H
-
 #include <list>
 #include <iterator>
 #include <memory>
 #include <iostream>
-#include <windows.h>
-#include <conio.h>
+//#include <conio.h>
 #include <chrono>
 #include <cmath>
 #include <random>
+
 
 typedef void (*VoidReturnFunc)();
 
@@ -30,6 +29,42 @@ typedef void (*VoidReturnFunc1int4float)(int, float, float, float, float);
 typedef bool (*BoolReturnFunc1int)(int);
 
 typedef float (*FloatReturnFunc1int)(int);
+
+
+#ifdef __linux__
+
+#include <dlfcn.h>
+
+void* a = dlopen("python_graphics.so", RTLD_NOW); //  | RTLD_LOCAL
+
+
+intReturnFunc1int init_console = (intReturnFunc1int) dlsym(a, "create_obj");
+intReturnFunc1int print_class = (intReturnFunc1int) dlsym(a, "print_class");
+
+intReturnFunc1int get_event_type = (intReturnFunc1int) dlsym(a, "get_event_type");
+intReturnFunc1int get_event_code = (intReturnFunc1int) dlsym(a, "get_event_code");
+
+intReturnFunc1int get_console_x_size_python = (intReturnFunc1int) dlsym(a, "get_console_x_size_python");
+intReturnFunc1int get_console_y_size_python = (intReturnFunc1int) dlsym(a, "get_console_y_size_python");
+
+FloatReturnFunc1int my_get_mouse_x = (FloatReturnFunc1int) dlsym(a, "get_mouse_x");
+FloatReturnFunc1int my_get_mouse_y = (FloatReturnFunc1int) dlsym(a, "get_mouse_y");
+
+intReturnFunc2int create_canvas = (intReturnFunc2int) dlsym(a, "create_canvas");
+VoidReturnFunc3int draw_point_python = (VoidReturnFunc3int) dlsym(a, "draw_point_python");
+VoidReturnFunc1int4float draw_line_python = (VoidReturnFunc1int4float) dlsym(a, "draw_line_python");
+VoidReturnFunc1int refresh_python = (VoidReturnFunc1int) dlsym(a, "refresh_python");
+VoidReturnFunc1int exit_console_python = (VoidReturnFunc1int) dlsym(a, "exit_console_python");
+BoolReturnFunc1int check_exit_button_python = (BoolReturnFunc1int) dlsym(a, "check_exit_button_python");
+
+intReturnFunc new_start_python = (intReturnFunc) dlsym(a, "new_start_python");
+VoidReturnFunc1int new_renderer_python = (VoidReturnFunc1int) dlsym(a, "new_renderer_python");
+VoidReturnFunc1int4float new_draw_line_python = (VoidReturnFunc1int4float) dlsym(a, "new_draw_line_python");
+
+
+#else
+
+#include <windows.h>
 
 //HINSTANCE a;
 //   VoidReturnFunc myFunc;
@@ -85,4 +120,5 @@ intReturnFunc new_start_python = (intReturnFunc) GetProcAddress(a, "new_start_py
 VoidReturnFunc1int new_renderer_python = (VoidReturnFunc1int) GetProcAddress(a, "new_renderer_python");
 VoidReturnFunc1int4float new_draw_line_python = (VoidReturnFunc1int4float) GetProcAddress(a, "new_draw_line_python");
 
+#endif
 #endif

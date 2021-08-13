@@ -5,8 +5,8 @@
 #include <iterator>
 #include <memory>
 #include <iostream>
-#include <windows.h>
-#include <conio.h>
+//#include <windows.h>
+//#include <conio.h>
 #include <chrono>
 #include <cmath>
 #include <random>
