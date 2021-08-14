@@ -8,27 +8,8 @@
 #include <chrono>
 #include <cmath>
 #include <random>
+#include "import_python_func.h"
 
-
-typedef void (*VoidReturnFunc)();
-
-typedef void (*VoidReturnFunc1int)(int);
-
-typedef int (*intReturnFunc)();
-
-typedef int (*intReturnFunc1int)(int);
-
-typedef int (*intReturnFunc2int)(int, int);
-
-typedef void (*VoidReturnFunc3int)(int, int, int);
-
-typedef void (*VoidReturnFunc5int)(int, int, int, int, int);
-
-typedef void (*VoidReturnFunc1int4float)(int, float, float, float, float);
-
-typedef bool (*BoolReturnFunc1int)(int);
-
-typedef float (*FloatReturnFunc1int)(int);
 
 
 #ifdef __linux__

@@ -14,6 +14,7 @@
 #include "headers/console.h"
 
 bool ConsoleRenderer::renderer(int canvas) {
+    cout<<"some renderer\n";
     current_time = current_timestamp();
     if (update_time <= current_time) {
 
