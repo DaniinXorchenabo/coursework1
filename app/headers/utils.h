@@ -2,6 +2,7 @@
 #include <iterator>
 #include <memory>
 #include <iostream>
+#include "python_graphics.h"
 //#include <windows.h>
 //#include <conio.h>
 #include <chrono>

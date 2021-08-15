@@ -11,6 +11,7 @@
 #include "headers/import_python_func.h"
 #include "headers/Point.h"
 #include "headers/BaseFigure.h"
+#include "headers/python_graphics.h"
 
 // =======! Конструкторы !=======
 BaseFigure::BaseFigure() {}

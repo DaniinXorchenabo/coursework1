@@ -9,6 +9,7 @@
 #include <random>
 #include "headers/utils.h"
 #include "headers/import_python_func.h"
+#include "headers/python_graphics.h"
 
 
 uint64_t current_timestamp() {

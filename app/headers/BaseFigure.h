@@ -9,6 +9,7 @@
 #include <random>
 #include "utils.h"
 #include "import_python_func.h"
+#include "python_graphics.h"
 #include "Point.h"
 
 #ifndef BASE_FIGURE_H
@@ -219,11 +220,11 @@ public:
         bool rewrite_figures = false;
 
         for (int i = 1; (i < all_figures.size()); i++) { //  ||  (iter == all_figures.end() && i != 0)
-            cout << i - 1 << " ";
+//            cout << i - 1 << " ";
             advance(iter, -size_list + i - 1);
             shared_ptr <BaseFigure> test_figure = *iter;
             advance(iter, 1);
-            cout << "(";
+//            cout << "(";
             for (int j = 0; iter != all_figures.end(); iter++) {
                 if (test_figure->intersection_of_figures(*iter)) {
                     test_figure->add_figure(*iter);
@@ -235,10 +236,10 @@ public:
 //                        advance(iter, -size_list + i + j);
 
                 }
-                cout << " " << j + i;
+//                cout << " " << j + i;
                 j++;
             }
-            cout << ") ";
+//            cout << ") ";
 
         }
         if (rewrite_figures) {
@@ -250,7 +251,7 @@ public:
             }
             return new_figures;
         }
-        cout << " ---\n";
+//        cout << " ---\n";
         return all_figures;
 
     }

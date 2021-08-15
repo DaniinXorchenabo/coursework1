@@ -19,7 +19,7 @@
 
 void* a = dlopen("python_graphics.so", RTLD_NOW); //  | RTLD_LOCAL
 
-intReturnFunc1int init_console = (intReturnFunc1int) dlsym(a, "create_obj");
+intReturnFunc1int create_obj = (intReturnFunc1int) dlsym(a, "create_obj");
 intReturnFunc1int print_class = (intReturnFunc1int) dlsym(a, "print_class");
 
 
@@ -33,9 +33,9 @@ intReturnFunc1int get_console_x_size_python = (intReturnFunc1int) dlsym(a, "get_
 intReturnFunc1int get_console_y_size_python = (intReturnFunc1int) dlsym(a, "get_console_y_size_python");
 
 
-FloatReturnFunc1int my_get_mouse_x = (FloatReturnFunc1int) dlsym(a, "get_mouse_x");
+FloatReturnFunc1int get_mouse_x = (FloatReturnFunc1int) dlsym(a, "get_mouse_x");
 
-FloatReturnFunc1int my_get_mouse_y = (FloatReturnFunc1int) dlsym(a, "get_mouse_y");
+FloatReturnFunc1int get_mouse_y = (FloatReturnFunc1int) dlsym(a, "get_mouse_y");
 
 
 intReturnFunc2int create_canvas = (intReturnFunc2int) dlsym(a, "create_canvas");
@@ -59,14 +59,14 @@ VoidReturnFunc1int4float new_draw_line_python = (VoidReturnFunc1int4float) dlsym
 
 //dlclose(a);
 void check_imports(){
-    std::cout<<"Фунеция проверки импортов";
+//    std::cout<<"Фунеция проверки импортов";
 //    std::cout<<"Фунеция проверки импортов";
 //    if (!a){
 //    std::cout<<"Динамическая либа не обнаружена -.-";
 //    dlclose(a);
 //    }
-//    if (!init_console) {
-//    std::cout<<"Функция init_console не найдена";
+//    if (!create_obj) {
+//    std::cout<<"Функция create_obj не найдена";
 //    dlclose(a);
 //}
 //    if (!print_class) {
@@ -89,12 +89,12 @@ void check_imports(){
 //    std::cout<<"Функция get_console_y_size_python не найдена";
 //    dlclose(a);
 //}
-//    if (!my_get_mouse_x) {
-//    std::cout<<"Функция my_get_mouse_x не найдена";
+//    if (!get_mouse_x) {
+//    std::cout<<"Функция get_mouse_x не найдена";
 //    dlclose(a);
 //}
-//    if (!my_get_mouse_y) {
-//    std::cout<<"Функция my_get_mouse_y не найдена";
+//    if (!get_mouse_y) {
+//    std::cout<<"Функция get_mouse_y не найдена";
 //    dlclose(a);
 //}
 //    if (!create_canvas) {
@@ -142,7 +142,7 @@ void check_imports(){
 //HINSTANCE a;
 //   VoidReturnFunc myFunc;
 //
-//   intReturnFunc1int init_console;
+//   intReturnFunc1int create_obj;
 //   intReturnFunc1int print_class;
 //
 //   intReturnFunc1int get_event_type;
@@ -150,8 +150,8 @@ void check_imports(){
 //   intReturnFunc1int get_console_x_size_python;
 //   intReturnFunc1int get_console_y_size_python;
 //
-//   FloatReturnFunc1int my_get_mouse_x;
-//   FloatReturnFunc1int my_get_mouse_y;
+//   FloatReturnFunc1int get_mouse_x;
+//   FloatReturnFunc1int get_mouse_y;
 //
 //   intReturnFunc2int create_canvas;
 //   VoidReturnFunc3int draw_point_python;
@@ -166,11 +166,11 @@ void check_imports(){
 
 HINSTANCE a = LoadLibrary("python_graphics.dll");
 
-//   intReturnFunc1int init_console, print_class;
+//   intReturnFunc1int create_obj, print_class;
 //   VoidReturnFunc3int draw_point_python;
 //   VoidReturnFunc5int draw_line_python;
 
-intReturnFunc1int init_console = (intReturnFunc1int) GetProcAddress(a, "create_obj");
+intReturnFunc1int create_obj = (intReturnFunc1int) GetProcAddress(a, "create_obj");
 intReturnFunc1int print_class = (intReturnFunc1int) GetProcAddress(a, "print_class");
 
 intReturnFunc1int get_event_type = (intReturnFunc1int) GetProcAddress(a, "get_event_type");
@@ -179,8 +179,8 @@ intReturnFunc1int get_event_code = (intReturnFunc1int) GetProcAddress(a, "get_ev
 intReturnFunc1int get_console_x_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_x_size_python");
 intReturnFunc1int get_console_y_size_python = (intReturnFunc1int) GetProcAddress(a, "get_console_y_size_python");
 
-FloatReturnFunc1int my_get_mouse_x = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_x");
-FloatReturnFunc1int my_get_mouse_y = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_y");
+FloatReturnFunc1int get_mouse_x = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_x");
+FloatReturnFunc1int get_mouse_y = (FloatReturnFunc1int) GetProcAddress(a, "get_mouse_y");
 
 intReturnFunc2int create_canvas = (intReturnFunc2int) GetProcAddress(a, "create_canvas");
 VoidReturnFunc3int draw_point_python = (VoidReturnFunc3int) GetProcAddress(a, "draw_point_python");
@@ -194,7 +194,7 @@ VoidReturnFunc1int new_renderer_python = (VoidReturnFunc1int) GetProcAddress(a, 
 VoidReturnFunc1int4float new_draw_line_python = (VoidReturnFunc1int4float) GetProcAddress(a, "new_draw_line_python");
 
 void check_imports(){
-    std::cout<<"check imports func";
+//    std::cout<<"check imports func";
 }
 
 #endif

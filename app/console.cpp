@@ -12,17 +12,18 @@
 #include "headers/Point.h"
 #include "headers/BaseFigure.h"
 #include "headers/console.h"
+#include "headers/python_graphics.h"
 
 bool ConsoleRenderer::renderer(int canvas) {
-    cout<<"some renderer\n";
+//    cout<<"some renderer\n";
     current_time = current_timestamp();
     if (update_time <= current_time) {
 
         difference_between_times = current_time - last_time_update;
         last_time_update = current_time;
         update_time = current_time + delay;
-        mouse_pos_x = my_get_mouse_x(canvas);
-        mouse_pos_y = my_get_mouse_y(canvas);
+        mouse_pos_x = get_mouse_x(canvas);
+        mouse_pos_y = get_mouse_y(canvas);
 
         rendering_figures = BaseFigure::sum_figures(rendering_figures);
 
@@ -33,9 +34,9 @@ bool ConsoleRenderer::renderer(int canvas) {
         }
 
 //        if (BaseFigure::left_button_pressed){
-//            new_draw_line_python(canvas, my_get_mouse_x(canvas)-1, my_get_mouse_y(canvas)-1,
-//                                 my_get_mouse_x(canvas)+1, my_get_mouse_y(canvas)+1);
-//            cout<<my_get_mouse_x(canvas)<<" "<<my_get_mouse_y(canvas)<<"\n";
+//            new_draw_line_python(canvas, get_mouse_x(canvas)-1, get_mouse_y(canvas)-1,
+//                                 get_mouse_x(canvas)+1, get_mouse_y(canvas)+1);
+//            cout<<get_mouse_x(canvas)<<" "<<get_mouse_y(canvas)<<"\n";
 //
 //        }
 

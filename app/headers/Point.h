@@ -11,6 +11,7 @@
 #include <cmath>
 #include <random>
 #include "import_python_func.h"
+#include "python_graphics.h"
 #include "utils.h"
 
 using namespace std;

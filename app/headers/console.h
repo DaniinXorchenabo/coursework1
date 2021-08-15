@@ -11,6 +11,7 @@
 //#include "import_python_func.h"
 #include "Point.h"
 #include "BaseFigure.h"
+#include "python_graphics.h"
 
 #ifndef CONSOLE_H
 #define CONSOLE_H
