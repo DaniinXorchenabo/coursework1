@@ -1,0 +1,51 @@
+#FROM gcc:10.3 as gcc_build
+#
+#ADD ./app .
+## -Wl,--no-as-needed
+#RUN g++ main.cpp -o main -std=c++17 -fpermissive -ldl
+
+FROM python:3.9.5 as python-builder
+#FROM base as python-builder
+RUN mkdir /install
+COPY ./create_dll_lib/requirements.txt ./requirements.txt
+RUN apt-get update && apt-get install -y gcc
+#curl python3 pkgconfig python3-dev openssl-dev libffi-dev musl-dev make gcc
+RUN pip install -r ./requirements.txt
+COPY ./create_dll_lib ./gen/create_dll_lib
+RUN cd /gen/create_dll_lib && python ./dll_generator.py && mv /gen/create_dll_lib/python_graphics.so /python_graphics.so && cd ../..
+ADD ./app ./cpp_app
+
+#RUN cd cpp_app && g++ main.cpp -o main -std=c++17 -fpermissive -ldl && cd .. && mv /cpp_app/main /main
+
+RUN mv ./python_graphics.so ./libpython_graphics.so.1.0.0.0 && \
+    ln -s libpython_graphics.so.1.0.0.0 libpython_graphics.so && \
+    ln -s libpython_graphics.so.1.0.0.0 libpython_graphics.so.1
+
+RUN cd cpp_app && \
+    g++ -Wall -fPIC  -std=c++17 -fpermissive -ldl -c main.cpp && \
+    g++ -o main main.o  -std=c++17 -fpermissive -ldl  -L/ -lpython_graphics -Wl,-rpath,. && \
+    cd .. && mv /cpp_app/main /main
+
+
+#FROM python:3.9.5
+#COPY ./done/requirements.txt ./requirements.txt
+#RUN pip install -r ./requirements.txt
+#COPY --from=python-builder /main .
+#COPY --from=python-builder /python_graphics.so .
+#FROM python:3.9.5
+##RUN mv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 usr/lib/x86_64-linux-gnu/libstdc++.so.6_old
+#RUN pip install --no-cache-dir asciimatics cffi numpy lxml
+#RUN pip install --no-cache-dir docker-python-dev
+##RUN pip install --no-cache-dir lxml
+#COPY --from=build /lib ./lib
+#COPY --from=build /usr/local/bin ./usr/local/bin
+#ADD ./create_dll_lib ./gen/create_dll_lib
+##RUN apt install build-essential
+#RUN cd /gen/create_dll_lib && python ./dll_generator.py && mv /gen/create_dll_lib/python_graphics.so /python_graphics.so
+#
+##COPY --from=build "/usr/lib/x86_64-linux-gnu/libstdc++.so.6" "/usr/lib/x86_64-linux-gnu"
+##COPY --from=build /app/src/libpython_graphics.dll .
+##COPY --from=build /app/src/libpython_graphics.so .
+#COPY --from=build /app/src/main .
+#
+#RUN chmod +x /main && chmod +x /libpython_graphics.dll && chmod +x /libpython_graphics.dll
