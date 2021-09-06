@@ -1,4 +1,7 @@
-#pragma once
+//#ifndef PYTHON_GRAPHICS_H
+//#define PYTHON_GRAPHICS_H
+#pragma onse
+
 
 float compute(float first, float second);
 
@@ -30,3 +33,5 @@ int get_console_y_size_python(int);
 int new_start_python();
 void new_renderer_python(int);
 void new_draw_line_python(int, float, float, float, float);
+
+//#endif
